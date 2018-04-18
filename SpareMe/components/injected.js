@@ -290,18 +290,18 @@ export const injectedJS = `(${String(function() {
     }
 
     function analyzePage() {
-        var elements = document.body.querySelectorAll('p, a, li, h1, h2, h3, h4, span, div');
+        var elements = document.body.querySelectorAll('p, a, li, h1, h2, h3, h4, span, div, font, b');
         var predictionGroup = {};
         for (var i = 0; i < elements.length; i++) {
-            var element = elements[i]
+            var element = elements[i];
 
-            // Discard divs and spans that wrap other HTML elements
             if (element.tagName === 'SPAN' || element.tagName === 'DIV') {
-                if (element.childElementCount != 0) {
+                // Discard divs and spans that wrap other HTML elements
+                if (element.firstChild != null && (element.firstChild.tagName === 'SPAN' || element.firstChild.tagName === 'DIV')) {
                     continue;
-                } else {
-                    console.log('Found non-empty div/span');
                 }
+            } else {
+                console.log('Found non-empty div/span');
             }
 
             // Add unique class so we can find this element later
