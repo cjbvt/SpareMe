@@ -145,7 +145,15 @@ export const injectedJS = `(${String(function() {
 
             case 'unflagIgnored':
                 var element = window.revealedElement;
+                console.log('unflagIgnored');
                 hideElement(element);
+
+                let img = element.getElementsByTagName("IMG")[0];
+
+                if (img != null) {
+                    hideElement(img);
+                }
+
                 break;
 
             default:
@@ -161,9 +169,7 @@ export const injectedJS = `(${String(function() {
             element.oldSrc = element.src;
 
             // We may want to host this image ourselves to ensure it's always available
-            element.src = "https://www.materialui.co/materialIcons/action/visibility_off_grey_24x24.png";
-
-            element.style.opacity = '0.5';
+            element.src = "https://www.materialui.co/materialIcons/action/visibility_off_grey_96x96.png";
             element.style.width = "auto";
             element.style.height = 'auto';
         } else {
@@ -180,12 +186,19 @@ export const injectedJS = `(${String(function() {
         element.classList.remove(HIDDEN_CLASSNAME);
         element.classList.add(REVEALED_CLASSNAME);
 
+        // Recurse for img containers
+        let img = element.getElementsByTagName("IMG")[0];
+        if (img != null) {
+            revealElement(img);
+        }
+
         if (element.tagName === 'IMG') {
-            element.src = element.oldSrc;
-            element.style.opacity = null;
+            element.style.visibility = "hidden"; // prevent image flashing
             element.style.width = null;
             element.style.height = null;
-            element.style.border = null;
+            element.src = element.oldSrc;
+            element.style.visibility = "visible" // prevent image flashing
+
         } else {
             element.style.color = null;
             element.style.textShadow = null;
@@ -193,6 +206,8 @@ export const injectedJS = `(${String(function() {
 
         element.style.webkitUserSelect = 'auto';
         window.revealedElement = element;
+        console.log("revealed element:")
+        console.log(element)
     }
 
     function configureLongPressActions(node) {
@@ -309,7 +324,7 @@ export const injectedJS = `(${String(function() {
     }
 
     function analyzePage() {
-        var elements = document.body.querySelectorAll('p, a, li, h1, h2, h3, h4, span, div, font, b, img');
+        var elements = document.body.querySelectorAll('p, a, li, h1, h2, h3, h4, span, div, font, b, img, strong');
         var predictionGroup = {};
         for (var i = 0; i < elements.length; i++) {
             var element = elements[i];
