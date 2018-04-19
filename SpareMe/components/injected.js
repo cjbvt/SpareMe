@@ -170,9 +170,10 @@ export const injectedJS = `(${String(function() {
             }
 
             // We may want to host this image ourselves to ensure it's always available
-            element.src = "https://www.materialui.co/materialIcons/action/visibility_off_grey_96x96.png";
-            element.style.width = "auto";
-            element.style.height = 'auto';
+            element.src = "https://www.materialui.co/materialIcons/action/visibility_off_grey_192x192.png";
+            element.style.objectFit = "contain"
+            element.style.objectPosition ="50% 50%";
+
         } else {
             element.style.color = 'transparent';
             element.style.textShadow = '0 0 20px black';
@@ -194,12 +195,12 @@ export const injectedJS = `(${String(function() {
         }
 
         if (element.tagName === 'IMG') {
+            // Reset all changed image properties
             element.style.visibility = "hidden"; // prevent image flashing
-            element.style.width = null;
-            element.style.height = null;
             element.src = element.oldSrc;
+            element.style.objectFit = null;
+            element.style.objectPosition = null;
             element.style.visibility = "visible" // prevent image flashing
-
         } else {
             element.style.color = null;
             element.style.textShadow = null;
@@ -207,8 +208,6 @@ export const injectedJS = `(${String(function() {
 
         element.style.webkitUserSelect = 'auto';
         window.revealedElement = element;
-        console.log("revealed element:")
-        console.log(element)
     }
 
     function configureLongPressActions(node) {
