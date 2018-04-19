@@ -136,7 +136,7 @@ export const injectedJS = `(${String(function() {
                 // Alert React that the user unflagged an element
                 window.postMessage(JSON.stringify({
                     messageType: 'addTextToAPI',
-                    text : String(element.tagName === 'img' ?
+                    text : String(element.tagName === 'IMG' ?
                         element.alt :
                         element.innerText),
                         category: DEFAULT_CATEGORY
@@ -157,12 +157,20 @@ export const injectedJS = `(${String(function() {
     function hideElement(element) {
         element.classList.add(HIDDEN_CLASSNAME);
 
-        // Cascade class down to all children
-        for (var i = 0; i < element.children.length; i++) {
-            element.children.item(i).classList.add(HIDDEN_CLASSNAME);
+        if (element.tagName === 'IMG') {
+            element.oldSrc = element.src;
+
+            // We may want to host this image ourselves to ensure it's always available
+            element.src = "https://www.materialui.co/materialIcons/action/visibility_off_grey_24x24.png";
+
+            element.style.opacity = '0.5';
+            element.style.width = "auto";
+            element.style.height = 'auto';
+        } else {
+            element.style.color = 'transparent';
+            element.style.textShadow = '0 0 20px black';
         }
 
-        element.style.filter = 'blur(10px)';
         element.style.webkitUserSelect = 'none';
         element.addEventListener('click', onHiddenElementClick(element));
         configureLongPressActions(element)
@@ -171,8 +179,19 @@ export const injectedJS = `(${String(function() {
     function revealElement(element) {
         element.classList.remove(HIDDEN_CLASSNAME);
         element.classList.add(REVEALED_CLASSNAME);
+
+        if (element.tagName === 'IMG') {
+            element.src = element.oldSrc;
+            element.style.opacity = null;
+            element.style.width = null;
+            element.style.height = null;
+            element.style.border = null;
+        } else {
+            element.style.color = null;
+            element.style.textShadow = null;
+        }
+
         element.style.webkitUserSelect = 'auto';
-        element.style.filter = 'blur(0px)';
         window.revealedElement = element;
     }
 
@@ -290,7 +309,7 @@ export const injectedJS = `(${String(function() {
     }
 
     function analyzePage() {
-        var elements = document.body.querySelectorAll('p, a, li, h1, h2, h3, h4, span, div, font, b');
+        var elements = document.body.querySelectorAll('p, a, li, h1, h2, h3, h4, span, div, font, b, img');
         var predictionGroup = {};
         for (var i = 0; i < elements.length; i++) {
             var element = elements[i];
@@ -313,7 +332,7 @@ export const injectedJS = `(${String(function() {
             element.classList.add(INJECTED_CLASSNAME)
 
             // Map the added class name to the element's innerText
-            predictionGroup[addedClass] = String(element.tagName === 'img' ? element.alt : element.innerText)
+            predictionGroup[addedClass] = String(element.tagName === 'IMG' ? element.alt : element.innerText)
 
             // Send elements in groups of HTTP_BATCH_SIZE to React
             if (injectedClassCounter % HTTP_BATCH_SIZE == 0 || i == elements.length - 1) {
