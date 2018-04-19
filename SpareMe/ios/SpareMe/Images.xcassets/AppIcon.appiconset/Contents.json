@@ -1,6 +1,7 @@
 {
   "images" : [
     {
+<<<<<<< HEAD
       "size" : "20x20",
       "idiom" : "iphone",
       "filename" : "Icon-40.png",
@@ -13,6 +14,9 @@
       "scale" : "3x"
     },
     {
+=======
+      "idiom" : "iphone",
+>>>>>>> Code cleanup
       "size" : "29x29",
       "idiom" : "iphone",
       "filename" : "Icon-58.png",
@@ -47,12 +51,15 @@
       "idiom" : "iphone",
       "filename" : "Icon-180.png",
       "scale" : "3x"
+<<<<<<< HEAD
     },
     {
       "size" : "1024x1024",
       "idiom" : "ios-marketing",
       "filename" : "Icon-1024.png",
       "scale" : "1x"
+=======
+>>>>>>> Code cleanup
     }
   ],
   "info" : {

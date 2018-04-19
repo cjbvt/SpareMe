@@ -112,8 +112,6 @@ export const injectedJS = `(${String(function() {
                     var elementsInRangeParent = selectionRange.commonAncestorContainer
                         .getElementsByClassName(INJECTED_CLASSNAME);
 
-                    console.log(elementsInRangeParent);
-
                     for (var i = 0, element; element = elementsInRangeParent[i]; i++) {
                         if (selection.containsNode(element, true)) {
                             hideElement(element);
@@ -145,7 +143,6 @@ export const injectedJS = `(${String(function() {
 
             case 'unflagIgnored':
                 var element = window.revealedElement;
-                console.log('unflagIgnored');
                 hideElement(element);
 
                 let img = element.getElementsByTagName("IMG")[0];
@@ -334,8 +331,6 @@ export const injectedJS = `(${String(function() {
                 if (element.firstChild != null && (element.firstChild.tagName === 'SPAN' || element.firstChild.tagName === 'DIV')) {
                     continue;
                 }
-            } else {
-                console.log('Found non-empty div/span');
             }
 
             // Add unique class so we can find this element later
