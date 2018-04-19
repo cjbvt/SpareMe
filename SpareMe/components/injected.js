@@ -149,7 +149,6 @@ export const injectedJS = `(${String(function() {
                 hideElement(element);
 
                 let img = element.getElementsByTagName("IMG")[0];
-
                 if (img != null) {
                     hideElement(img);
                 }
@@ -166,7 +165,9 @@ export const injectedJS = `(${String(function() {
         element.classList.add(HIDDEN_CLASSNAME);
 
         if (element.tagName === 'IMG') {
-            element.oldSrc = element.src;
+            if (element.oldSrc == null) {
+                element.oldSrc = element.src;
+            }
 
             // We may want to host this image ourselves to ensure it's always available
             element.src = "https://www.materialui.co/materialIcons/action/visibility_off_grey_96x96.png";
