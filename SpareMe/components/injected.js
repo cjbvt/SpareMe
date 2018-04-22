@@ -144,6 +144,8 @@ export const injectedJS = `(${String(function() {
             case 'unflagIgnored':
                 var element = window.revealedElement;
                 hideElement(element);
+                console.log("unflag ignored for ");
+                console.log(element);
 
                 let img = element.getElementsByTagName("IMG")[0];
                 if (img != null) {
@@ -179,17 +181,20 @@ export const injectedJS = `(${String(function() {
         element.style.webkitUserSelect = 'none';
         element.addEventListener('click', onHiddenElementClick(element));
         configureLongPressActions(element)
+
+        var children = element.children;
+
+        // If this node was revealed, check and hide any of its revealed children.
+        for (var i = 0; i < children.length; i++) {
+            if (isRevealed(children[i])) {
+                hideElement(children[i]);
+            }
+        }
     }
 
     function revealElement(element) {
         element.classList.remove(HIDDEN_CLASSNAME);
         element.classList.add(REVEALED_CLASSNAME);
-
-        // Recurse for img containers
-        let img = element.getElementsByTagName("IMG")[0];
-        if (img != null) {
-            revealElement(img);
-        }
 
         if (element.tagName === 'IMG') {
             // Reset all changed image properties
@@ -205,6 +210,11 @@ export const injectedJS = `(${String(function() {
 
         element.style.webkitUserSelect = 'auto';
         window.revealedElement = element;
+
+        // Recurse up for elements in containers
+        if (isHidden(element.parentElement)) {
+            revealElement(parentElement);
+        }
     }
 
     function configureLongPressActions(node) {
@@ -235,6 +245,8 @@ export const injectedJS = `(${String(function() {
     function onHiddenElementClick(element) {
         return function(event) {
             if (isHidden(element)) {
+                console.log("called onHiddenElementClick for ")
+                console.log(element);
                 /* Element must be revealed before allowing
                 its normal onclick to fire */
                 event.preventDefault();
