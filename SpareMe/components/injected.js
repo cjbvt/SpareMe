@@ -22,6 +22,24 @@ export const injectedJS = `(${String(function() {
         document.addEventListener('message', onReactMessage);
         document.addEventListener('selectionchange', onSelection);
 
+        /* Listen for and process dynamically-added elements */
+        var observer = new MutationObserver(function(mutations) {
+                for (var i = 0; i < mutations.length; i++) {
+                    for (var j = 0; j < mutations[i].addedNodes.length; j++) {
+                        console.log(mutations[i].addedNodes[j])
+
+                        let addedNode = mutations[i].addedNodes[j];
+
+                        addedNode.querySelectorAll('*').forEach(function(element) {
+                            hideElement(element);
+                        })
+                    }
+                }
+        });
+
+        observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
+
+
         // Send tags to React for processing
         analyzePage();
     }
@@ -52,6 +70,10 @@ export const injectedJS = `(${String(function() {
             case 'hide':
                 let className = action['className'];
                 var element = document.getElementsByClassName(className)[0];
+
+                if (!element) {
+                    return;
+                }
 
                 // Only hide elements once :D
                 if (!isHidden(element) && !isRevealed(element)) {
@@ -174,7 +196,7 @@ export const injectedJS = `(${String(function() {
             element.style.objectPosition ="50% 50%";
 
         } else {
-            element.style.color = 'transparent';
+            element.style.setProperty('color', 'transparent', 'important');
             element.style.textShadow = '0 0 20px black';
         }
 
@@ -345,6 +367,11 @@ export const injectedJS = `(${String(function() {
                 }
             }
 
+            console.log("analyzing:")
+            console.log(element)
+
+            // document.addEventListener('load', (element) => {console.log("loaded:" + element); hideElement(element)}, false)
+
             // Add unique class so we can find this element later
             let addedClass = INJECTED_CLASSNAME + injectedClassCounter;
             injectedClassCounter += 1;
@@ -369,11 +396,11 @@ export const injectedJS = `(${String(function() {
     }
 
     function isHidden(element) {
-        return element.classList.contains(HIDDEN_CLASSNAME);
+        return element && element.classList.contains(HIDDEN_CLASSNAME);
     }
 
     function isRevealed(element) {
-        return element.classList.contains(REVEALED_CLASSNAME);
+        return element && element.classList.contains(REVEALED_CLASSNAME);
     }
 
 })})();` // JavaScript :)
