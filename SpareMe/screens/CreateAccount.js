@@ -14,48 +14,64 @@ export default class CreateAccount extends Component {
 
     onRegister = () => {
         const { email, password } = this.state;
-        firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then((user) => {
-          this.props.navigateTutorial();
-            // If you need to do anything with the user, do it here
-            // The user will be logged in automatically by the
-            // `onAuthStateChanged` listener we set up in App.js earlier
-        }).catch((error) => {
-            const { code, message } = error;
-            console.log(error);
-            var alertMessage = 'Unable to create account.'
-            if (message.includes('already in use')) {
-                alertMessage = constants.DUPLICATE_EMAIL;
-            }
-            else if (message.includes('email address')) {
-                alertMessage = constants.INVALID_EMAIL;
-            }
-            else if (message.includes('The given password')) {
-                alertMessage = constants.INVALID_PASSWORD;
-            }
-            Alert.alert(
-              'Create Account Failed',
-              alertMessage,
-              [
-                {text: 'OK', onPress: () => console.log('OK Pressed')},
-              ],
-              { cancelable: false }
-            )
-        });
+        if (this.validatePassword(password)){
+          firebase.auth().createUserWithEmailAndPassword(email, password)
+          .then((user) => {
+            this.props.navigateTutorial();
+              // If you need to do anything with the user, do it here
+              // The user will be logged in automatically by the
+              // `onAuthStateChanged` listener we set up in App.js earlier
+          }).catch((error) => {
+              const { code, message } = error;
+              console.log(error);
+              var alertMessage = 'Unable to create account.'
+              if (message.includes('already in use')) {
+                  alertMessage = constants.DUPLICATE_EMAIL;
+              }
+              else if (message.includes('email address')) {
+                  alertMessage = constants.INVALID_EMAIL;
+              }
+              else if (message.includes('The given password')) {
+                  alertMessage = constants.INVALID_PASSWORD;
+              }
+              Alert.alert(
+                'Create Account Failed',
+                alertMessage,
+                [
+                  {text: 'OK', onPress: () => console.log('OK Pressed')},
+                ],
+                { cancelable: false }
+              )
+          });
+        } else {
+          console.log("Password doesnt meet requirements");
+          this.setState({
+            failedRequirements: true,
+            passwordHasFocus: true
+          })
+        }
+
     }
 
-    onFocus() {
-      console.log("onFocus");
-      this.setState({
-          passwordHasFocus: true
-      })
+    showRequirments() {
+      if (this.state.passwordHasFocus) {
+        this.setState({
+          passwordHasFocus: false
+        })
+      } else {
+          this.setState({
+              passwordHasFocus: true
+          })
+        }
     }
 
-    onBlur() {
-      console.log("onBlur");
-      this.setState({
-        passwordHasFocus: false
-      })
+    validatePassword(pw) {
+      var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+      if (!strongRegex.test(pw)){
+        return false;
+      }
+
+      return true;
     }
 
 
@@ -93,24 +109,28 @@ export default class CreateAccount extends Component {
                         autoCorrect={false}
                         secureTextEntry={true}
                         selectionColor={constants.COLOR_GRAY}
-                        onBlur={ () => this.onBlur() }
-                        onFocus={ () => this.onFocus() }
                         onChangeText={ (text) => {
                             this.setState({
                                 password: text
                             });
                         }}
                     />
+                    {this.state.failedRequirements ?
+                      <Text style={styles.failedPassword}>
+                        Password did not meet requirements
+                      </Text> :
+                      <Text style={styles.passwordReq} onPress={() => this.showRequirments()}>
+                        Password Requirements
+                      </Text>
+                    }
                     {this.state.passwordHasFocus &&
                         <View style={styles.passwordReqContainer}>
-                            <Text style={styles.passwordReqHeader}>
-                                { 'Password Requirements\n'}
-                            </Text>
                               <Text style={styles.passwordReq}>
                                 { '\u2022 Between 8 and 25 characters in length\n'}
                                 { '\u2022 Must contain at least one UPPER CASE letter\n' }
                                 { '\u2022 Must contain at least one lower case letter\n' }
-                                { '\u2022 Must contain at least one number or special character' }
+                                { '\u2022 Must contain at least one number\n' }
+                                { '\u2022 Must contain at least one special character' }
                             </Text>
                         </View>
                     }
@@ -187,11 +207,12 @@ const styles = StyleSheet.create({
     passwordReq: {
         color: constants.COLOR_WHITE,
         fontSize: constants.TEXT_SMALL,
-        marginLeft: 8
+        marginLeft: 4
     },
-    passwordReqHeader: {
-        color: constants.COLOR_WHITE,
+    failedPassword: {
+        color: constants.COLOR_NEGATIVE,
         fontSize: constants.TEXT_MEDIUM,
+        marginLeft: 4
     },
     passwordReqContainer: {
       height:175,
