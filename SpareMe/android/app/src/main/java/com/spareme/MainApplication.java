@@ -3,9 +3,13 @@ package com.spareme;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+<<<<<<< HEAD
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
+=======
+import com.brentvatne.react.ReactVideoPackage;
+>>>>>>> 2224039320fb83ee27c84e251165e1110a94a35f
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -29,7 +33,11 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
+<<<<<<< HEAD
             new SplashScreenReactPackage(),
+=======
+            new ReactVideoPackage(),
+>>>>>>> 2224039320fb83ee27c84e251165e1110a94a35f
         new RNFirebasePackage(),
         new RNFirebaseAuthPackage()
       );

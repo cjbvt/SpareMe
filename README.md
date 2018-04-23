@@ -1,10 +1,21 @@
-![SpareME Logo](docs/img/logo.png)
+<p align="center">
+  <img src="docs/img/logo.png" alt="SpareME Logo" width=200px/>
+</p>
 
-# Current Situation
+[![Build Status](https://travis-ci.org/cjbvt/SpareME.svg?branch=master)](https://travis-ci.org/cjbvt/SpareME)
+[![Maintainability](https://api.codeclimate.com/v1/badges/a0bc66df20ad153fdf03/maintainability)](https://codeclimate.com/github/cjbvt/SpareME/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/a0bc66df20ad153fdf03/test_coverage)](https://codeclimate.com/github/cjbvt/SpareME/test_coverage)
+[![Coverage Status](https://coveralls.io/repos/github/cjbvt/SpareME/badge.svg?branch=master)](https://coveralls.io/github/cjbvt/SpareME?branch=master)
+[![Join the chat at https://gitter.im/cjbvt/SpareME](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cjbvt/SpareME?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-The internet can be a miserable place. The combination of pseudonymity and social media functionality seems to encourage rampant hate speech, bullying, abuse, and generally harmful content. Content platforms have proven unwilling or unable to do enough about this situation, perhaps in part because they don’t have much incentive to address it. Additionally, there are many reasonable concerns that content removal by platforms often amounts to censorship and potentially contributes to radicalization.
+[![Dependency Status](https://david-dm.org/cjbvt/SpareME.svg?path=SpareMe)](https://david-dm.org/cjbvt/SpareME?path=SpareMe)
+[![devDependencies Status](https://david-dm.org/cjbvt/SpareME/dev-status.svg?path=SpareMe)](https://david-dm.org/cjbvt/SpareME?path=SpareMe&type=dev)
+[![Known Vulnerabilities](https://snyk.io/test/github/cjbvt/SpareME/badge.svg?targetFile=SpareMe/package.json)](https://snyk.io/test/github/cjbvt/SpareME?targetFile=SpareMe/package.json)
 
-# Vision
+# Abstract
 
-SpareME is a multi-platform mobile browser which incorporates a personalized content filter. The filter obscures individual blocks of text in a way that still allows them to be selectively revealed. SpareME learns over time the sort of things that the user doesn’t want to see and selectively hides only those sorts of things on pages they visit. This empowers individual users to more effectively avoid content they deem harmful, while not actually removing content from the platform or disrupting the user’s ability to access and engage with any part of the internet.
+This project is a cross-platform mobile web browser with an integrated personalized micro-content filter that helps users avoid abuse, bullying, hate speech, and other harmful content online without otherwise disrupting normal use of the web.
 
+The system hides individual blocks of text that match a user’s personal definition of harmful content as each page loads. The user can selectively reveal these blocks of text if they wish, which guarantees that they have ultimate control over the content they see and are able to address any false positives. The project uses machine learning based on word embeddings to perform the NLP that drives the personalized micro-content filter, which helps users to build their personalized definition of harmful content more efficiently than they could with, for example, a simple word blacklist.
+
+The project’s goal is to reduce the impact of harmful speech while simultaneously promoting greater freedom of speech and eliminating justifications for censorship. The responsibility of curbing harmful speech online is currently entrusted to content platforms who, for a variety of reasons such as perverse incentives, will never solve the problem. This project shifts power from content platforms to individual users, who are each given the autonomy to fully personalize their own web experience.

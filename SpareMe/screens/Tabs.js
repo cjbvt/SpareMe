@@ -1,7 +1,8 @@
 'use strict';
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, Text, View, ScrollView, NetInfo, Image, TouchableOpacity } from 'react-native';
+import { BackHandler, Platform, Dimensions, StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, NetInfo } from 'react-native';
 import CreateAccount from './CreateAccount'
+import Connectivity from '../components/Connectivity'
 import SignIn from './SignIn'
 import * as constants from 'constants'
 
@@ -20,22 +21,38 @@ export default class Tabs extends Component {
         });
     }
 
+    componentWillMount() {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.onBackClicked);
+        }
+    }
+
     componentDidMount() {
         NetInfo.isConnected.addEventListener('connectionChange', this.onConnectivityChange);
     }
 
     componentWillUnmount() {
         NetInfo.removeEventListener('connectionChange', this.onConnectivityChange);
+        if (Platform.OS === 'android') {
+            BackHandler.removeEventListener("hardwareBackPress", this.onBackClicked);
+        }
+    }
+
+    onBackClicked = () => {
+        BackHandler.exitApp();
+        return true;
     }
 
     onConnectivityChange = isConnected => {
-        if (isConnected) {
-            this.setState({isConnected: isConnected});
-        }
+        this.setState({isConnected: isConnected});
     }
 
     navigateHome = () => {
         this.props.navigation.navigate('Home');
+    }
+
+    navigateTutorial = () => {
+        this.props.navigation.navigate('Tutorial', {fromCreate: true});
     }
 
     onScroll = (event) => {
@@ -55,13 +72,7 @@ export default class Tabs extends Component {
 
     render() {
         if (!this.state.isConnected) {
-            return(
-                <View style={styles.container}>
-                    <View style={styles.connectionContainer}>
-                        <Text style={styles.connectionText}>Unable to connect. Please check your network settings.</Text>
-                    </View>
-                </View>
-            );
+            return (<Connectivity />);
         }
         return (
             <View style={styles.container} onLayout={this.onLayout}>
@@ -73,11 +84,12 @@ export default class Tabs extends Component {
                     onScroll={this.onScroll}
                     scrollEventThrottle={16}
                 >
+                    <Image source={require('./photo.jpeg')} resizeMode='cover' style={[styles.backgroundImage, {height: this.state.layout.height, width: this.state.layout.width * 2}]}/>
                     <View style={{height: this.state.layout.height, width: this.state.layout.width}}>
                         <SignIn isATab={true} navigateHome={this.navigateHome} />
                     </View>
                     <View style={{height: this.state.layout.height, width: this.state.layout.width}}>
-                        <CreateAccount isATab={true} navigateHome={this.navigateHome} />
+                        <CreateAccount isATab={true} navigateTutorial={this.navigateTutorial} />
                     </View>
                 </ScrollView>
                 <View style={[styles.iconContainer, {width: this.state.layout.width}]}>
@@ -88,7 +100,7 @@ export default class Tabs extends Component {
                         }
                     }>
                         <Image source={require('./account.png')} style={[styles.icon, this.state.firstPage ? null : styles.disabled]}/>
-                        <Text style={styles.iconText}>Sign In</Text>
+                        <Text style={[styles.iconText, this.state.firstPage ? null : styles.disabledText]}>Sign In</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.iconButton}
@@ -97,11 +109,10 @@ export default class Tabs extends Component {
                         }
                     }>
                         <Image source={require('./create.png')} style={[styles.icon, this.state.firstPage ? styles.disabled : null]}/>
-                        <Text style={styles.iconText}>Create Account</Text>
+                        <Text style={[styles.iconText, this.state.firstPage ? styles.disabledText : null]}>Create Account</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-
         );
     }
 }
@@ -110,17 +121,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: constants.COLOR_MAIN
-    },
-    connectionContainer: {
-        flex: 1,
-        backgroundColor: constants.COLOR_MAIN,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 30
-    },
-    connectionText: {
-        color: constants.COLOR_WHITE,
-        fontSize: constants.TEXT_LARGE
     },
     iconContainer: {
         height: 65,
@@ -146,5 +146,12 @@ const styles = StyleSheet.create({
     },
     disabled: {
         tintColor: constants.COLOR_DISABLED
+    },
+    disabledText: {
+        color: constants.COLOR_DISABLED
+    },
+    backgroundImage: {
+        position: 'absolute',
+        zIndex: -1
     }
 });

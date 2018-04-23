@@ -20,7 +20,7 @@ export const injectedJS = `(${String(function() {
         // Open two-way message channel between React and the WebView
         createMessageSender();
         document.addEventListener('message', onReactMessage);
-        document.addEventListener('selectionchange', onSelection, false);
+        document.addEventListener('selectionchange', onSelection);
 
         // Send tags to React for processing
         analyzePage();
@@ -191,9 +191,16 @@ export const injectedJS = `(${String(function() {
         let textSelection = window.getSelection();
 
         if (textSelection == '') {
-            window.postMessage(JSON.stringify({
+            /* Delay message posting by 10ms to allow any other listeners
+            to be invoked before using window.postMessage(). Bubbling/capturing
+            doesn't work here due to the way window.postMessage() is implemented
+            */
+            window.setTimeout(() => {
+                window.postMessage(JSON.stringify({
                 messageType: 'selectionEnded'
-            }));
+                }));
+            }, 10);
+
             return;
         }
 

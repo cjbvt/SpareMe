@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     },
     flagButton: {
         alignItems: 'center',
-        backgroundColor: constants.COLOR_MAIN,
+        backgroundColor: constants.COLOR_SECONDARY,
         borderRadius: 37,
         height: 74,
         justifyContent: 'center',

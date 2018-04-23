@@ -1,9 +1,11 @@
 'use strict';
 import React, { Component } from 'react';
-import { StyleSheet, ActivityIndicator, View, Button, NetInfo, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Button, NetInfo, Text, TouchableOpacity } from 'react-native';
 import CustomStatusBar from '../components/CustomStatusBar'
 import URLBar from '../components/URLBar'
 import Menu from '../components/Menu'
+import Connectivity from '../components/Connectivity'
+import Loading from '../components/Loading'
 import * as api from 'ml-api'
 import * as constants from 'constants'
 import FilterWebView from '../components/FilterWebView'
@@ -33,8 +35,8 @@ export default class Home extends Component {
         NetInfo.isConnected.addEventListener('connectionChange', this.onConnectivityChange);
         var self = this;
         this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
-            console.log(user);
             if (user) {
+                this.shouldNavigate = true;
                 console.log(user.email + ' user authenticated');
                 user.getIdToken(/* forceRefresh */ true)
                 .then(function(result) {
@@ -51,11 +53,11 @@ export default class Home extends Component {
                 });
             }
             else {
+                this.props.navigation.navigate('Tabs');
                 self.setState({
                     loading: false,
                     user: null,
                 });
-                this.props.navigation.navigate('Tabs');
             }
         });
     }
@@ -72,6 +74,9 @@ export default class Home extends Component {
     onConnectivityChange = isConnected => {
         if (isConnected) {
             this.setState({isConnected: isConnected});
+        }
+        else {
+            this.setState({loading: false})
         }
     }
 
@@ -119,35 +124,24 @@ export default class Home extends Component {
 
     menuHandler = (value) => {
         switch(value) {
-          case constants.SIGN_IN: //Sign In
-            this.props.navigation.navigate('SignIn');
-            break;
-          case constants.SIGN_OUT: //Sign Out
-            console.log('User Logged Out');
-            firebase.auth().signOut();
-            this.refresh();
-            break;
-          case constants.CREATE_ACCOUNT: // Create Account
-          this.props.navigation.navigate('CreateAccount');
-            break;
-          case constants.SETTINGS: // Settings
-          this.props.navigation.navigate('Settings');
-            break;
-          default:
-            break;
+            case constants.SIGN_OUT: //Sign Out
+                this.props.navigation.navigate('Tabs');
+                firebase.auth().signOut();
+                break;
+            case constants.SETTINGS: // Settings
+                this.props.navigation.navigate('Settings');
+                break;
+            case constants.TUTORIAL: // Tutorial
+                this.props.navigation.navigate('Tutorial');
+                break;
+            default:
+                break;
         }
     }
 
     renderError = () => {
         return(
-            <View style={styles.activityView}>
-                <ActivityIndicator
-                    animating={true}
-                    color='#84888d'
-                    size='large'
-                    hidesWhenStopped={true}
-                />
-            </View>
+            <Loading />
         );
     }
 
@@ -164,33 +158,16 @@ export default class Home extends Component {
     }
 
     render() {
+        if (this.state.loading) {
+            return (
+                <Loading />
+            );
+        }
         if (!this.state.isConnected) {
             return(
-                <View style={styles.container}>
-                    <CustomStatusBar/>
-                    <View style={styles.connectionContainer}>
-                        <Text style={styles.connectionText}>Unable to connect. Please check your network settings.</Text>
-                    </View>
-                </View>
+                <Connectivity />
             );
         }
-        // The application is initialising
-        if (this.state.loading) {
-            return(
-                <View style={styles.activityView}>
-                    <ActivityIndicator
-                        animating={true}
-                        color='#84888d'
-                        size='large'
-                        hidesWhenStopped={true}
-                    />
-                </View>
-            );
-        }
-        // The user is an Object, so they're logged in
-        // if (this.state.user) return <LoggedIn />;
-        // The user is null, so they're logged out
-        // return <LoggedOut />;
         return (
             <View style={styles.container}>
                 <CustomStatusBar/>
@@ -225,22 +202,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1
     },
-    activityView: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1
-    },
-    connectionContainer: {
-        flex: 1,
-        backgroundColor: constants.COLOR_MAIN,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 30
-    },
-    connectionText: {
-        color: constants.COLOR_WHITE,
-        fontSize: constants.TEXT_LARGE
-    },
     fullscreen: {
         height: '100%',
         width: '100%',
@@ -250,7 +211,6 @@ const styles = StyleSheet.create({
     },
     menu: {
         width: '75%',
-        // height: '50%',
         right: 0,
         zIndex: 10,
         position: 'absolute'

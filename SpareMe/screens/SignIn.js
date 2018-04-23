@@ -1,8 +1,8 @@
 'use strict';
 import React, { Component } from 'react';
-import { Alert, StyleSheet, Text, View, Button, TextInput, NetInfo } from 'react-native';
-import CustomStatusBar from '../components/CustomStatusBar'
+import { Alert, StyleSheet, Text, View, Button, TextInput } from 'react-native';
 import FilterWebView from '../components/FilterWebView'
+import Connectivity from '../components/Connectivity'
 import firebase from 'react-native-firebase';
 import * as constants from 'constants'
 
@@ -10,30 +10,13 @@ export default class SignIn extends Component {
     constructor(props) {
         super(props);
         this.state = {};
-        NetInfo.isConnected.fetch().then(isConnected => {
-            console.log(isConnected);
-            this.setState({isConnected: isConnected});
-        });
-    }
-
-    componentDidMount() {
-        NetInfo.isConnected.addEventListener('connectionChange', this.onConnectivityChange);
-    }
-
-    componentWillUnmount() {
-        NetInfo.removeEventListener('connectionChange', this.onConnectivityChange);
-    }
-
-    onConnectivityChange = isConnected => {
-        this.setState({isConnected: isConnected});
     }
 
     onLogin = () => {
         const { email, password } = this.state;
         firebase.auth().signInWithEmailAndPassword(email, password)
         .then((user) => {
-            console.log(this.props);
-            this.props.isATab ? this.props.navigateHome() : this.props.navigation.goBack();
+            this.props.navigateHome();
             // If you need to do anything with the user, do it here
             // The user will be logged in automatically by the
             // `onAuthStateChanged` listener we set up in App.js earlier
@@ -59,19 +42,8 @@ export default class SignIn extends Component {
     }
 
     render() {
-        if (!this.state.isConnected) {
-            return(
-                <View style={styles.container}>
-                    <CustomStatusBar/>
-                    <View style={styles.connectionContainer}>
-                        <Text style={styles.connectionText}>Unable to connect. Please check your network settings.</Text>
-                    </View>
-                </View>
-            );
-        }
         return (
             <View style={styles.container}>
-                <CustomStatusBar/>
                 <View style={styles.loginView}>
                     <Text style={styles.signInText}>
                         Sign In
@@ -115,17 +87,9 @@ export default class SignIn extends Component {
                             <Button
                                 title='Sign In'
                                 onPress={this.onLogin}
+                                color={constants.COLOR_POSITIVE}
                             />
                         </View>
-                        { this.props.isATab ? null : (
-                            <View style={styles.button}>
-                                <Button
-                                    title='Cancel'
-                                    onPress={() => this.props.navigation.goBack()}
-                                    color='red'
-                                />
-                            </View>
-                        )}
                     </View>
                 </View>
             </View>
@@ -141,7 +105,7 @@ const styles = StyleSheet.create({
     loginView: {
         padding: 50,
         flex: 1,
-        backgroundColor: constants.COLOR_MAIN,
+        backgroundColor: constants.COLOR_MAIN_TRANSPARENT,
     },
     buttonContainer: {
         flex: 1,
