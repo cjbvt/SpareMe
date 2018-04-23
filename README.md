@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/cjbvt/SpareME.svg?branch=master)](https://travis-ci.org/cjbvt/SpareME)
 [![Dependency Status](https://david-dm.org/cjbvt/SpareME.svg)](https://david-dm.org/cjbvt/SpareME)
+[![Known Vulnerabilities](https://snyk.io/test/github/cjbvt/SpareME/badge.svg?targetFile=SpareMe/package.json)](https://snyk.io/test/github/cjbvt/SpareME)
 [![Coverage Status](https://coveralls.io/repos/github/cjbvt/SpareME/badge.svg?branch=master)](https://coveralls.io/github/cjbvt/SpareME?branch=master)
 [![Join the chat at https://gitter.im/cjbvt/SpareME](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cjbvt/SpareME?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
