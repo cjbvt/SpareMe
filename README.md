@@ -1,11 +1,11 @@
-<p align="center">
-  <img src="docs/img/logo.png" alt="SpareME Logo" width=200px/>
-</p>
-
 [![Build Status](https://travis-ci.org/cjbvt/SpareME.svg?branch=master)](https://travis-ci.org/cjbvt/SpareME)
 [![Dependency Status](https://david-dm.org/cjbvt/SpareME.svg)](https://david-dm.org/cjbvt/SpareME)
 [![Coverage Status](https://coveralls.io/repos/github/cjbvt/SpareME/badge.svg?branch=master)](https://coveralls.io/github/cjbvt/SpareME?branch=master)
 [![Join the chat at https://gitter.im/cjbvt/SpareME](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cjbvt/SpareME?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+<p align="center">
+  <img src="docs/img/logo.png" alt="SpareME Logo" width=200px/>
+</p>
 
 # Abstract
 
