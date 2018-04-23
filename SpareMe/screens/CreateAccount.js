@@ -102,7 +102,7 @@ export default class CreateAccount extends Component {
                         Password:
                     </Text>
                     <TextInput
-                        style={styles.inputPassword}
+                        style={[styles.input, {marginBottom: 5}]}
                         placeholder="Enter Password"
                         underlineColorAndroid={constants.COLOR_WHITE}
                         autoCapitalize='none'
@@ -172,17 +172,6 @@ const styles = StyleSheet.create({
         height: 40,
         margin: 5
     },
-    connectionContainer: {
-        flex: 1,
-        backgroundColor: constants.COLOR_MAIN,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 30
-    },
-    connectionText: {
-        color: constants.COLOR_WHITE,
-        fontSize: constants.TEXT_LARGE
-    },
     createText: {
         color: constants.COLOR_WHITE,
         fontSize: constants.TEXT_HEADER,
@@ -199,24 +188,17 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         color: constants.COLOR_WHITE
     },
-    inputPassword: {
-        alignSelf: 'stretch',
-        fontSize: constants.TEXT_MEDIUM,
-        color: constants.COLOR_WHITE
-    },
     passwordReq: {
         color: constants.COLOR_WHITE,
-        fontSize: constants.TEXT_SMALL,
-        marginLeft: 4
+        fontSize: constants.TEXT_SMALL
     },
     failedPassword: {
         color: constants.COLOR_NEGATIVE,
-        fontSize: constants.TEXT_MEDIUM,
-        marginLeft: 4
+        fontSize: constants.TEXT_MEDIUM
     },
     passwordReqContainer: {
-      height:175,
+      width: '100%',
       padding: 5,
-      backgroundColor: '#66666690'
+      backgroundColor: constants.COLOR_GRAY_TRANSPARENT
     }
 });

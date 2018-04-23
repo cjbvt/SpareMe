@@ -13,6 +13,7 @@ export const COLOR_SECONDARY = RED;
 export const COLOR_DISABLED = '#aaaacc';
 export const COLOR_WHITE = '#fffcf9';
 export const COLOR_GRAY = '#666666';
+export const COLOR_GRAY_TRANSPARENT = COLOR_GRAY + '88';
 export const COLOR_POSITIVE = GREEN;
 export const COLOR_NEGATIVE = RED;
 export const GOOGLE_SEARCH = 'https://www.google.com/search?q=';
