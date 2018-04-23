@@ -1,6 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, NetInfo } from 'react-native';
+import { BackHandler, Platform, Dimensions, StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, NetInfo } from 'react-native';
 import CreateAccount from './CreateAccount'
 import Connectivity from '../components/Connectivity'
 import SignIn from './SignIn'
@@ -21,12 +21,26 @@ export default class Tabs extends Component {
         });
     }
 
+    componentWillMount() {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.onBackClicked);
+        }
+    }
+
     componentDidMount() {
         NetInfo.isConnected.addEventListener('connectionChange', this.onConnectivityChange);
     }
 
     componentWillUnmount() {
         NetInfo.removeEventListener('connectionChange', this.onConnectivityChange);
+        if (Platform.OS === 'android') {
+            BackHandler.removeEventListener("hardwareBackPress", this.onBackClicked);
+        }
+    }
+
+    onBackClicked = () => {
+        BackHandler.exitApp();
+        return true;
     }
 
     onConnectivityChange = isConnected => {

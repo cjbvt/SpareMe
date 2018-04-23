@@ -32,6 +32,7 @@ const RootStack = StackNavigator(
         headerMode: 'none',
         navigationOptions: {
             headerVisible: false,
+            gesturesEnabled: false
         }
     }
 );
