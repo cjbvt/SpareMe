@@ -9,7 +9,11 @@ target 'SpareMe' do
   pod 'Firebase/Core'
   pod 'Firebase/Auth'
 
+<<<<<<< HEAD
+  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
+=======
   pod 'react-native-video', :path => '../node_modules/react-native-video'
+>>>>>>> 2224039320fb83ee27c84e251165e1110a94a35f
 
   target 'SpareMeTests' do
     inherit! :search_paths

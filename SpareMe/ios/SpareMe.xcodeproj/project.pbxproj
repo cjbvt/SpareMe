@@ -42,7 +42,12 @@
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		AB988DFCB49A26D00B338687 /* libPods-SpareMe-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E721F34E09B5FBE3C631E16 /* libPods-SpareMe-tvOS.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
+<<<<<<< HEAD
+		B53C22FC2085589700708DD0 /* libSplashScreen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B53C22FB2085588700708DD0 /* libSplashScreen.a */; };
+		B553C672208E746A007D41EC /* textLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = B553C64A208E746A007D41EC /* textLogo.png */; };
+=======
 		B5430FEF2085961B00C07993 /* libRCTVideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B5430FC82085961B00C07993 /* libRCTVideo.a */; };
+>>>>>>> 2224039320fb83ee27c84e251165e1110a94a35f
 		B587627920688F1C008C5312 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B587625220688F1C008C5312 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -264,6 +269,14 @@
 			remoteGlobalIDString = 358F4ED71D1E81A9004DF814;
 			remoteInfo = RCTBlob;
 		};
+<<<<<<< HEAD
+		B53C22FA2085588700708DD0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B53C22F62085588700708DD0 /* SplashScreen.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3D7682761D8E76B80014119E;
+			remoteInfo = SplashScreen;
+=======
 		B5430FF52085972400C07993 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B5430FF02085972400C07993 /* RCTVideo.xcodeproj */;
@@ -277,6 +290,7 @@
 			proxyType = 2;
 			remoteGlobalIDString = 641E28441F0EEC8500443AF6;
 			remoteInfo = "RCTVideo-tvOS";
+>>>>>>> 2224039320fb83ee27c84e251165e1110a94a35f
 		};
 		B55CED2220621178000131EF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -379,8 +393,15 @@
 		9FAECDD7C1807EAF6A3CB23C /* Pods-SpareMeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpareMeTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SpareMeTests/Pods-SpareMeTests.release.xcconfig"; sourceTree = "<group>"; };
 		AACE09B925365AF795AD9CFD /* libPods-SpareMe.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SpareMe.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
+<<<<<<< HEAD
+		B53C22EC2085573D00708DD0 /* libSplashScreen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSplashScreen.a; path = "../../../../../../Library/Developer/Xcode/DerivedData/SplashScreen-agkpvosxbihmnbgiiirwduimdmvx/Build/Products/Debug-iphonesimulator/libSplashScreen.a"; sourceTree = "<group>"; };
+		B53C22EF2085577800708DD0 /* libSplashScreen.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSplashScreen.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B53C22F62085588700708DD0 /* SplashScreen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SplashScreen.xcodeproj; path = "../node_modules/react-native-splash-screen/ios/SplashScreen.xcodeproj"; sourceTree = "<group>"; };
+		B553C64A208E746A007D41EC /* textLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = textLogo.png; sourceTree = "<group>"; };
+=======
 		B5430FC82085961B00C07993 /* libRCTVideo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libRCTVideo.a; path = "../../../../../../Library/Developer/Xcode/DerivedData/RCTVideo-gjvdwfgmteliiddhatrrakiwsgte/Build/Products/Debug-iphonesimulator/libRCTVideo.a"; sourceTree = "<group>"; };
 		B5430FF02085972400C07993 /* RCTVideo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVideo.xcodeproj; path = "../node_modules/react-native-video/ios/RCTVideo.xcodeproj"; sourceTree = "<group>"; };
+>>>>>>> 2224039320fb83ee27c84e251165e1110a94a35f
 		B587625220688F1C008C5312 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B6143A471FAA41F64A870D26 /* Pods-SpareMe-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpareMe-tvOSTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SpareMe-tvOSTests/Pods-SpareMe-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		CA941B719C900EB770102127 /* Pods-SpareMe-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpareMe-tvOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-SpareMe-tvOS/Pods-SpareMe-tvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -403,6 +424,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B53C22FC2085589700708DD0 /* libSplashScreen.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
@@ -539,6 +561,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				B553C64A208E746A007D41EC /* textLogo.png */,
 			);
 			name = SpareMe;
 			sourceTree = "<group>";
@@ -569,8 +592,13 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+<<<<<<< HEAD
+				B53C22EC2085573D00708DD0 /* libSplashScreen.a */,
+=======
 				B5430FC82085961B00C07993 /* libRCTVideo.a */,
+>>>>>>> 2224039320fb83ee27c84e251165e1110a94a35f
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
+				B53C22EF2085577800708DD0 /* libSplashScreen.a */,
 				AACE09B925365AF795AD9CFD /* libPods-SpareMe.a */,
 				1E721F34E09B5FBE3C631E16 /* libPods-SpareMe-tvOS.a */,
 				97EB2192EA0E402CEEEF47B3 /* libPods-SpareMe-tvOSTests.a */,
@@ -615,7 +643,11 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+<<<<<<< HEAD
+				B53C22F62085588700708DD0 /* SplashScreen.xcodeproj */,
+=======
 				B5430FF02085972400C07993 /* RCTVideo.xcodeproj */,
+>>>>>>> 2224039320fb83ee27c84e251165e1110a94a35f
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
@@ -678,11 +710,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+<<<<<<< HEAD
+		B53C22F72085588700708DD0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B53C22FB2085588700708DD0 /* libSplashScreen.a */,
+=======
 		B5430FF12085972400C07993 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				B5430FF62085972400C07993 /* libRCTVideo.a */,
 				B5430FF82085972400C07993 /* libRCTVideo.a */,
+>>>>>>> 2224039320fb83ee27c84e251165e1110a94a35f
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -887,6 +926,10 @@
 				{
 					ProductGroup = B587623320688BED008C5312 /* Products */;
 					ProjectRef = E8DA81999F2A4BE88C94C53B /* RNFirebase.xcodeproj */;
+				},
+				{
+					ProductGroup = B53C22F72085588700708DD0 /* Products */;
+					ProjectRef = B53C22F62085588700708DD0 /* SplashScreen.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -1103,6 +1146,13 @@
 			remoteRef = ADBDB9261DFEBF0700ED6528 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+<<<<<<< HEAD
+		B53C22FB2085588700708DD0 /* libSplashScreen.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libSplashScreen.a;
+			remoteRef = B53C22FA2085588700708DD0 /* PBXContainerItemProxy */;
+=======
 		B5430FF62085972400C07993 /* libRCTVideo.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1115,6 +1165,7 @@
 			fileType = archive.ar;
 			path = libRCTVideo.a;
 			remoteRef = B5430FF72085972400C07993 /* PBXContainerItemProxy */;
+>>>>>>> 2224039320fb83ee27c84e251165e1110a94a35f
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		B55CED2320621178000131EF /* libjsinspector.a */ = {
@@ -1195,6 +1246,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				B553C672208E746A007D41EC /* textLogo.png in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				B587627920688F1C008C5312 /* GoogleService-Info.plist in Resources */,
 			);
@@ -1571,7 +1623,11 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
+<<<<<<< HEAD
+					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
+=======
 					"$(SRCROOT)/../node_modules/react-native-video/ios",
+>>>>>>> 2224039320fb83ee27c84e251165e1110a94a35f
 				);
 				INFOPLIST_FILE = SpareMe/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1595,7 +1651,11 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
+<<<<<<< HEAD
+					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
+=======
 					"$(SRCROOT)/../node_modules/react-native-video/ios",
+>>>>>>> 2224039320fb83ee27c84e251165e1110a94a35f
 				);
 				INFOPLIST_FILE = SpareMe/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
