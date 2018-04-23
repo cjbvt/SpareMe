@@ -8,7 +8,7 @@ import * as constants from 'constants'
 export default class CreateAccount extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {passwordHasFocus: false};
 
     }
 
@@ -44,6 +44,21 @@ export default class CreateAccount extends Component {
         });
     }
 
+    onFocus() {
+      console.log("onFocus");
+      this.setState({
+          passwordHasFocus: true
+      })
+    }
+
+    onBlur() {
+      console.log("onBlur");
+      this.setState({
+        passwordHasFocus: false
+      })
+    }
+
+
     render() {
         return (
             <View style={styles.container}>
@@ -71,19 +86,34 @@ export default class CreateAccount extends Component {
                         Password:
                     </Text>
                     <TextInput
-                        style={styles.input}
+                        style={styles.inputPassword}
                         placeholder="Enter Password"
                         underlineColorAndroid={constants.COLOR_WHITE}
                         autoCapitalize='none'
                         autoCorrect={false}
                         secureTextEntry={true}
                         selectionColor={constants.COLOR_GRAY}
+                        onBlur={ () => this.onBlur() }
+                        onFocus={ () => this.onFocus() }
                         onChangeText={ (text) => {
                             this.setState({
                                 password: text
                             });
                         }}
                     />
+                    {this.state.passwordHasFocus &&
+                        <View style={styles.passwordReqContainer}>
+                            <Text style={styles.passwordReqHeader}>
+                                { 'Password Requirements\n'}
+                            </Text>
+                              <Text style={styles.passwordReq}>
+                                { '\u2022 Between 8 and 25 characters in length\n'}
+                                { '\u2022 Must contain at least one UPPER CASE letter\n' }
+                                { '\u2022 Must contain at least one lower case letter\n' }
+                                { '\u2022 Must contain at least one number or special character' }
+                            </Text>
+                        </View>
+                    }
 
                     <View style={styles.buttonContainer}>
                         <View style={styles.button}>
@@ -98,6 +128,7 @@ export default class CreateAccount extends Component {
             </View>
 
         );
+
     }
 }
 
@@ -147,5 +178,24 @@ const styles = StyleSheet.create({
         fontSize: constants.TEXT_MEDIUM,
         marginBottom: 10,
         color: constants.COLOR_WHITE
+    },
+    inputPassword: {
+        alignSelf: 'stretch',
+        fontSize: constants.TEXT_MEDIUM,
+        color: constants.COLOR_WHITE
+    },
+    passwordReq: {
+        color: constants.COLOR_WHITE,
+        fontSize: constants.TEXT_SMALL,
+        marginLeft: 8
+    },
+    passwordReqHeader: {
+        color: constants.COLOR_WHITE,
+        fontSize: constants.TEXT_MEDIUM,
+    },
+    passwordReqContainer: {
+      height:175,
+      padding: 5,
+      backgroundColor: '#66666690'
     }
 });
