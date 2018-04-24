@@ -14,7 +14,7 @@ export default class SignIn extends Component {
 
     onLogin = () => {
         const { email, password } = this.state;
-        firebase.auth().signInWithEmailAndPassword(email, password)
+        firebase.auth().signInAndRetrieveDataWithEmailAndPassword(email, password)
         .then((user) => {
             this.props.navigateHome();
             // If you need to do anything with the user, do it here
