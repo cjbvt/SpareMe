@@ -5,8 +5,13 @@ import Home from './screens/Home'
 import Settings from './screens/Settings'
 import Tabs from './screens/Tabs'
 import Tutorial from './screens/Tutorial'
+import SplashScreen from 'react-native-splash-screen';
+
 
 export default class App extends Component {
+    componentDidMount() {
+        SplashScreen.hide();
+    }
     render() {
         return <RootStack />;
     }
