@@ -5,6 +5,7 @@ import FilterWebView from '../components/FilterWebView'
 import Connectivity from '../components/Connectivity'
 import firebase from 'react-native-firebase';
 import * as constants from 'constants'
+import * as api from 'ml-api'
 
 export default class Settings extends Component {
     constructor(props) {
@@ -44,6 +45,7 @@ export default class Settings extends Component {
                 } else {
                   firebase.auth().currentUser.delete().then(function() {
                   // User deleted
+                  api.dataReset(this.prop.idToken);
                   }).catch(function(error) {
                   // An error happened.
                   });

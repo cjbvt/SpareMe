@@ -7,6 +7,7 @@ const ENDPOINT_ADD = "add";
 const ENDPOINT_PREDICT = "predict"
 const ENDPOINT_LABELS = "labels"
 const DEFAULT_CATEGORY = "harmless";
+const ENDPOINT_RESET = "reset";
 
 /**
  * Gets categories for a group of Strings
@@ -87,4 +88,31 @@ export function getCategories(idToken, callback) {
     }).catch(error => {
         console.log(error);
     });
+}
+
+/**
+*   Deletes all data
+*
+*
+*/
+export function dataReset(idToken) {
+    let url = BASE_URL + ENDPOINT_RESET;
+
+    var form = new FormData();
+    form.append('id_token', idToken);
+
+    let requestData = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        },
+        body: form
+    }
+
+    fetch(url, requestData).then(function(response) {
+        console.log('dataReset got response: ' + JSON.stringify(response._bodyText));
+    }).catch(error => {
+        console.log(error);
+    });
+
 }
