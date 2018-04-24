@@ -5,6 +5,7 @@ import * as api from 'ml-api'
 import * as constants from 'constants'
 import { injectedJS } from './injected.js'
 import BottomButtonBar from './BottomButtonBar.js'
+import CategoryInput from './CategoryInput.js'
 
 export default class FilterWebView extends React.Component {
     constructor(props) {
@@ -69,8 +70,7 @@ export default class FilterWebView extends React.Component {
             case 'addTextToAPI':
                 console.log('adding newly-flagged text to the API. category: ' + jsonData['category'] + ' text: ' + jsonData['text']);
                 let category = jsonData['category'];
-                api.addTextToCategory(jsonData['text'], category ? category: 'hateful', // TODO let the user pick the category
-                this.props.idToken);
+                api.addTextToCategory(jsonData['text'], category ? category: 'hateful', this.props.idToken);
                 break;
 
             case 'predict':
@@ -158,8 +158,28 @@ export default class FilterWebView extends React.Component {
         });
 
         this.setState({
-            showFullscreenOpacity: false
+            showFullscreenOpacity: false,
+            showCategoryInput: false
         });
+    }
+
+    onNewCategoryButtonPress = (categories) => {
+        this.setState({
+            showCategoryInput: true,
+            categories: categories
+        });
+    }
+
+    onCategorySubmit = (category) => {
+        const lowerCategory = category.toLowerCase();
+        if (this.state.categories.includes(lowerCategory)) {
+            console.log('duplicate')
+            // Maybe alert, or just add to existing category
+        }
+        else {
+            console.log('unique')
+            // this.onFlagCategoryButtonPress(lowerCategory);
+        }
     }
 
     onUnflagButtonPress = () => {
@@ -178,19 +198,23 @@ export default class FilterWebView extends React.Component {
     }
 
     removeFullscreen = () => {
-        console.log('called removefullscreen');
-        let removeCategories = this.refs.buttonBar.state.showCategories;
-
-        if (removeCategories) {
-            this.refs.buttonBar.setState({showCategories: false});
-        } else { /* remove unflag button */
-            this.refs.buttonBar.setState({showUnflagButton: false});
-            this.postMessage({
-                name: 'unflagIgnored'
-            });
+        if (this.state.showCategoryInput) {
+            this.setState({showCategoryInput: false});
         }
+        else {
+            let removeCategories = this.refs.buttonBar.state.showCategories;
 
-        this.setState({showFullscreenOpacity: false});
+            if (removeCategories) {
+                this.refs.buttonBar.setState({showCategories: false});
+            } else { /* remove unflag button */
+                this.refs.buttonBar.setState({showUnflagButton: false});
+                this.postMessage({
+                    name: 'unflagIgnored'
+                });
+            }
+
+            this.setState({showFullscreenOpacity: false});
+        }
     }
 
     navChangeHandler = (webState) => {
@@ -204,6 +228,7 @@ export default class FilterWebView extends React.Component {
 
             this.setState({
                 showFullscreenOpacity: false,
+                showCategoryInput: false,
                 canGoBack: webState.canGoBack
             });
         }
@@ -220,8 +245,16 @@ export default class FilterWebView extends React.Component {
                     onMessage={e => this.onMessage(e.nativeEvent.data)}
                 />
                 {this.state.showFullscreenOpacity ?
-                    (<TouchableOpacity style={styles.fullscreen}
-                        onPress={this.removeFullscreen} />) : null
+                    (
+                        <TouchableOpacity style={styles.fullscreen} onPress={this.removeFullscreen} />
+                    ) : null
+                }
+                {this.state.showCategoryInput ?
+                    (
+                        <View style={styles.input}>
+                            <CategoryInput onSubmit={this.onCategorySubmit} />
+                        </View>
+                    ) : null
                 }
                 <BottomButtonBar
                     {...this.props}
@@ -236,12 +269,18 @@ export default class FilterWebView extends React.Component {
 const styles = StyleSheet.create({
     web: {
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        justifyContent: 'center'
     },
     fullscreen: {
         height: '100%',
         width: '100%',
         position: 'absolute',
         backgroundColor: '#77777777'
+    },
+    input: {
+        flex: 1,
+        width: '100%',
+        position: 'absolute'
     }
 });
