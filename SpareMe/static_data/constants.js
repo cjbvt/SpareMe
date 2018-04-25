@@ -4,7 +4,7 @@
 const BLUE = '#6096ba';
 const GREEN = '#32de8a';
 const RED = '#c73e1d';
-export const HATEFUL = 'hateful';
+export const HARMLESS = 'harmless';
 export const INJECTED_CLASSNAME = 'SpareMeElement';
 export const POST_MESSAGE = 'postMessage';
 export const COLOR_MAIN = BLUE;

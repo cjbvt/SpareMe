@@ -102,8 +102,10 @@ export default class Tutorial extends Component {
                     </View>
                     <View style={[styles.pageContainer, {width: this.state.layout.width, justifyContent: 'center'}]}>
                         <View style={styles.button}>
+                            <Image source={require('../ios/icon.png')} style={styles.logo}
+                            resizeMode={'contain'} />
                             <Button
-                                title='Done'
+                                title='Get started!'
                                 onPress={this.donePressed}
                                 color={constants.COLOR_POSITIVE}
                             />
@@ -175,4 +177,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         paddingVertical: 10
     },
+    logo: {
+        width: 250,
+        height: 250
+    }
 });
