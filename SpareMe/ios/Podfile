@@ -9,8 +9,6 @@ target 'SpareMe' do
   pod 'Firebase/Core'
   pod 'Firebase/Auth'
 
-  pod 'react-native-video', :path => '../node_modules/react-native-video'
-
   target 'SpareMeTests' do
     inherit! :search_paths
     # Pods for testing
