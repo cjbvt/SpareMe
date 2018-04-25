@@ -11,6 +11,7 @@ export default class Settings extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            disableDelete: true,
             layout: {
                 width: Dimensions.get('window').width,
                 height: Dimensions.get('window').height
@@ -35,6 +36,7 @@ export default class Settings extends Component {
     }
 
     onDelete = () => {
+      console.log("Delete");
         Alert.alert(
           'Delete Account',
           'Are you sure you want to delete the account?',
@@ -60,6 +62,31 @@ export default class Settings extends Component {
         )
     }
 
+    verifyUser = () => {
+        const email = this.props.navigation.state.params.user;
+        const password = this.state.password;
+        firebase.auth().signInAndRetrieveDataWithEmailAndPassword(email, password)
+        .then((user) => {
+          console.log("verifyUserDelete");
+          this.onDelete();
+            // If you need to do anything with the user, do it here
+            // The user will be logged in automatically by the
+            // `onAuthStateChanged` listener we set up in App.js earlier
+        }).catch((error) => {
+            const { code, message } = error;
+            console.log(message);
+            var alertMessage = 'Unable to verify user.'
+            Alert.alert(
+              'Incorrect Password',
+              alertMessage,
+              [
+                {text: 'OK', onPress: () => console.log('OK Pressed')},
+              ],
+              { cancelable: false }
+            )
+        });
+    }
+
     onLayout = (event) => {
         this.setState({
             layout:{
@@ -82,12 +109,31 @@ export default class Settings extends Component {
                     <Text style={styles.settingsText}>
                         Settings
                     </Text>
+                    <Text style={styles.headerText}>
+                        Password:
+                    </Text>
+                    <TextInput
+                        style= {styles.input}
+                        placeholder="Enter Password"
+                        underlineColorAndroid={constants.COLOR_WHITE}
+                        autoCapitalize='none'
+                        autoCorrect={false}
+                        secureTextEntry={true}
+                        selectionColor={constants.COLOR_GRAY}
+                        onChangeText={ (text) => {
+                            this.setState({
+                                password: text,
+                                disableDelete: false
+                            });
+                        }}
+                    />
                     <View style={styles.buttonContainer}>
                         <View style={styles.leftButton}>
                             <Button
                                 title='Delete Account'
-                                onPress={this.onDelete}
+                                onPress={this.verifyUser}
                                 color={constants.COLOR_POSITIVE}
+                                disabled= {this.state.disableDelete}
                             />
                         </View>
                         <View style={styles.button}>
@@ -143,10 +189,19 @@ const styles = StyleSheet.create({
     settingsText: {
         color: constants.COLOR_WHITE,
         fontSize: constants.TEXT_HEADER,
-        marginBottom: 20
+        marginBottom: 30
     },
     backgroundImage: {
         position: 'absolute',
         zIndex: -1
-    }
+    },
+    headerText: {
+        color: constants.COLOR_WHITE,
+        fontSize: constants.TEXT_LARGE,
+    },
+    input: {
+        alignSelf: 'stretch',
+        fontSize: constants.TEXT_MEDIUM,
+        color: constants.COLOR_WHITE
+    },
 });
