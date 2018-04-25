@@ -43,9 +43,11 @@ export default class Settings extends Component {
                 if (firebase.auth().currentUser == null) {
                   this.props.navigation.navigate('Tabs');
                 } else {
+                  api.dataReset(this.props.navigation.state.params.idToken);
+                  console.log("data reset");
                   firebase.auth().currentUser.delete().then(function() {
                   // User deleted
-                  api.dataReset(this.prop.idToken);
+
                   }).catch(function(error) {
                   // An error happened.
                   });

@@ -14,7 +14,7 @@ export default class CreateAccount extends Component {
 
     onRegister = () => {
         const { email, password } = this.state;
-        firebase.auth().createUserWithEmailAndPassword(email, password)
+        firebase.auth().createUserAndRetrieveDataWithEmailAndPassword(email, password)
         .then((user) => {
           this.props.navigateTutorial();
             // If you need to do anything with the user, do it here

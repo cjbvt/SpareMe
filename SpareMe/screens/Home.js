@@ -129,7 +129,7 @@ export default class Home extends Component {
                 firebase.auth().signOut();
                 break;
             case constants.SETTINGS: // Settings
-                this.props.navigation.navigate('Settings');
+                this.props.navigation.navigate('Settings', {idToken: this.state.idToken});
                 break;
             case constants.TUTORIAL: // Tutorial
                 this.props.navigation.navigate('Tutorial');
