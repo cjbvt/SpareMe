@@ -5,6 +5,7 @@ import * as api from 'ml-api'
 import * as constants from 'constants'
 import { injectedJS } from './injected.js'
 import BottomButtonBar from './BottomButtonBar.js'
+import CategoryInput from './CategoryInput.js'
 
 export default class FilterWebView extends React.Component {
     constructor(props) {
@@ -69,8 +70,12 @@ export default class FilterWebView extends React.Component {
             case 'addTextToAPI':
                 console.log('adding newly-flagged text to the API. category: ' + jsonData['category'] + ' text: ' + jsonData['text']);
                 let category = jsonData['category'];
-                api.addTextToCategory(jsonData['text'], category ? category: 'hateful', // TODO let the user pick the category
-                this.props.idToken);
+                api.addTextToCategory(jsonData['text'], category ? category: 'hateful', this.props.idToken);
+                break;
+
+            case 'textHidden':
+                console.log('hiding text: ' + jsonData['text']);
+                this.setState({textHidden: jsonData['text']})
                 break;
 
             case 'predict':
@@ -90,7 +95,7 @@ export default class FilterWebView extends React.Component {
                                         className: key
                                     });
                                 } else {
-                                    console.log(key + ' is in category: ' + category);
+                                    // console.log(key + ' is in category: ' + category);
                                 }
                             }
                         } catch (error) {
@@ -102,7 +107,7 @@ export default class FilterWebView extends React.Component {
             case 'selectionChanged':
                 let selection = jsonData['content'];
                 let isHiddenElement = jsonData['isHiddenElement'];
-                console.log('selection changed to: ' + selection);
+                // console.log('selection changed to: ' + selection);
                 this.refs.buttonBar.setState({
                     showFlagButton: !isHiddenElement
                 });
@@ -110,7 +115,7 @@ export default class FilterWebView extends React.Component {
                 break;
 
             case 'selectionEnded':
-                console.log('selection ended');
+                // console.log('selection ended');
                 this.refs.buttonBar.setState({
                     showFlagButton: false
                 })
@@ -158,7 +163,33 @@ export default class FilterWebView extends React.Component {
         });
 
         this.setState({
-            showFullscreenOpacity: false
+            showFullscreenOpacity: false,
+            showCategoryInput: false
+        });
+    }
+
+    onNewCategoryButtonPress = () => {
+        this.setState({
+            showCategoryInput: true,
+            textHidden: ''
+        });
+        this.postMessage({
+            name: 'hideSelectionForNewCategory'
+        });
+    }
+
+    onCategorySubmit = (category) => {
+        const lowerCategory = category.toLowerCase();
+        console.log('adding newly-flagged text to the API. category: ' + lowerCategory + ' text: ' + this.state.textHidden);
+        api.addTextToCategory(this.state.textHidden, category ? category: 'hateful', this.props.idToken);
+
+        this.refs.buttonBar.setState({
+            showCategories: false
+        });
+
+        this.setState({
+            showFullscreenOpacity: false,
+            showCategoryInput: false
         });
     }
 
@@ -178,7 +209,6 @@ export default class FilterWebView extends React.Component {
     }
 
     removeFullscreen = () => {
-        console.log('called removefullscreen');
         let removeCategories = this.refs.buttonBar.state.showCategories;
 
         if (removeCategories) {
@@ -190,7 +220,10 @@ export default class FilterWebView extends React.Component {
             });
         }
 
-        this.setState({showFullscreenOpacity: false});
+        this.setState({
+            showFullscreenOpacity: false,
+            showCategoryInput: false
+        });
     }
 
     navChangeHandler = (webState) => {
@@ -204,6 +237,7 @@ export default class FilterWebView extends React.Component {
 
             this.setState({
                 showFullscreenOpacity: false,
+                showCategoryInput: false,
                 canGoBack: webState.canGoBack
             });
         }
@@ -220,8 +254,16 @@ export default class FilterWebView extends React.Component {
                     onMessage={e => this.onMessage(e.nativeEvent.data)}
                 />
                 {this.state.showFullscreenOpacity ?
-                    (<TouchableOpacity style={styles.fullscreen}
-                        onPress={this.removeFullscreen} />) : null
+                    (
+                        <TouchableOpacity style={styles.fullscreen} onPress={this.removeFullscreen} />
+                    ) : null
+                }
+                {this.state.showCategoryInput ?
+                    (
+                        <View style={styles.input}>
+                            <CategoryInput onSubmit={this.onCategorySubmit} />
+                        </View>
+                    ) : null
                 }
                 <BottomButtonBar
                     {...this.props}
@@ -236,12 +278,18 @@ export default class FilterWebView extends React.Component {
 const styles = StyleSheet.create({
     web: {
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        justifyContent: 'center'
     },
     fullscreen: {
         height: '100%',
         width: '100%',
         position: 'absolute',
         backgroundColor: '#77777777'
+    },
+    input: {
+        flex: 1,
+        width: '100%',
+        position: 'absolute'
     }
 });

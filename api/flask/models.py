@@ -1,6 +1,6 @@
 from database import Base
 from sqlalchemy import Column, Integer, JSON, String, Text
-from sqlalchemy.types import DateTime, PickleType
+from sqlalchemy.types import DateTime, LargeBinary
 from sqlalchemy.schema import ForeignKey
 
 # http://docs.sqlalchemy.org/en/latest/orm/mapping_api.html
@@ -24,4 +24,4 @@ class Classifier(Base):
     id = Column(Integer(), primary_key=True)
     timestamp = Column(DateTime())
     uid = Column(String(256))
-    model = Column(PickleType())
+    model = Column(LargeBinary())

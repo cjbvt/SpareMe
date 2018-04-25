@@ -15,7 +15,7 @@ export default class CreateAccount extends Component {
     onRegister = () => {
         const { email, password } = this.state;
         if (this.validatePassword(password)){
-          firebase.auth().createUserWithEmailAndPassword(email, password)
+          firebase.auth().createUserAndRetrieveDataWithEmailAndPassword(email, password)
           .then((user) => {
             this.props.navigateTutorial();
               // If you need to do anything with the user, do it here
@@ -63,17 +63,6 @@ export default class CreateAccount extends Component {
               passwordHasFocus: true
           })
         }
-    }
-
-    validatePassword(pw) {
-      var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
-      if (!strongRegex.test(pw)){
-        return false;
-      }
-
-      return true;
-    }
-
 
     render() {
         return (

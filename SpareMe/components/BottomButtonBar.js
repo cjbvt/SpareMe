@@ -68,6 +68,11 @@ export default class BottomButtonBar extends React.Component {
                             }
                         }>
                             {this.renderCategoryButtons()}
+                            <TouchableOpacity
+                                style={styles.flagButton}
+                                onPress={() => {this.props.webView.onNewCategoryButtonPress()}}>
+                                <Text style={[styles.flagButtonText, {fontSize: constants.TEXT_LARGE, paddingBottom: 3}]}>+</Text>
+                            </TouchableOpacity>
                         </ScrollView>
                     ) : null
                 }

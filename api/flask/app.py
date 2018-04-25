@@ -113,7 +113,7 @@ def predict():
         return "unlabeled_text required", status.HTTP_400_BAD_REQUEST
     except ValueError:
         return "unlabeled_text unrecognized", status.HTTP_400_BAD_REQUEST
-    predicted_labels = classifier.predict(uid, unlabeled_text.values())
+    predicted_labels = classifier.predict(uid, list(unlabeled_text.values()))
     predictions = dict(zip(unlabeled_text.keys(), predicted_labels))
     return json.dumps(predictions), status.HTTP_200_OK
 
