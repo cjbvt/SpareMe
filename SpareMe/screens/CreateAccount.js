@@ -63,6 +63,7 @@ export default class CreateAccount extends Component {
               passwordHasFocus: true
           })
         }
+    }
 
     render() {
         return (
