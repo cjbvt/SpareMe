@@ -88,7 +88,7 @@ export default class FilterWebView extends React.Component {
                                 if (!categories.hasOwnProperty(key)) continue;
 
                                 let category = categories[key];
-                                if (category === constants.HATEFUL) {
+                                if (category !== constants.HARMLESS) {
                                     console.log('hiding: ' + key);
                                     this.postMessage({
                                         name: 'hide',
