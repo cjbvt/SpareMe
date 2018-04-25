@@ -8,41 +8,61 @@ import * as constants from 'constants'
 export default class CreateAccount extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {passwordHasFocus: false};
 
     }
 
     onRegister = () => {
         const { email, password } = this.state;
-        firebase.auth().createUserAndRetrieveDataWithEmailAndPassword(email, password)
-        .then((user) => {
-          this.props.navigateTutorial();
-            // If you need to do anything with the user, do it here
-            // The user will be logged in automatically by the
-            // `onAuthStateChanged` listener we set up in App.js earlier
-        }).catch((error) => {
-            const { code, message } = error;
-            console.log(error);
-            var alertMessage = 'Unable to create account.'
-            if (message.includes('already in use')) {
-                alertMessage = constants.DUPLICATE_EMAIL;
-            }
-            else if (message.includes('email address')) {
-                alertMessage = constants.INVALID_EMAIL;
-            }
-            else if (message.includes('The given password')) {
-                alertMessage = constants.INVALID_PASSWORD;
-            }
-            Alert.alert(
-              'Create Account Failed',
-              alertMessage,
-              [
-                {text: 'OK', onPress: () => console.log('OK Pressed')},
-              ],
-              { cancelable: false }
-            )
-        });
+        if (this.validatePassword(password)){
+          firebase.auth().createUserAndRetrieveDataWithEmailAndPassword(email, password)
+          .then((user) => {
+            this.props.navigateTutorial();
+              // If you need to do anything with the user, do it here
+              // The user will be logged in automatically by the
+              // `onAuthStateChanged` listener we set up in App.js earlier
+          }).catch((error) => {
+              const { code, message } = error;
+              console.log(error);
+              var alertMessage = 'Unable to create account.'
+              if (message.includes('already in use')) {
+                  alertMessage = constants.DUPLICATE_EMAIL;
+              }
+              else if (message.includes('email address')) {
+                  alertMessage = constants.INVALID_EMAIL;
+              }
+              else if (message.includes('The given password')) {
+                  alertMessage = constants.INVALID_PASSWORD;
+              }
+              Alert.alert(
+                'Create Account Failed',
+                alertMessage,
+                [
+                  {text: 'OK', onPress: () => console.log('OK Pressed')},
+                ],
+                { cancelable: false }
+              )
+          });
+        } else {
+          console.log("Password doesnt meet requirements");
+          this.setState({
+            failedRequirements: true,
+            passwordHasFocus: true
+          })
+        }
+
     }
+
+    showRequirments() {
+      if (this.state.passwordHasFocus) {
+        this.setState({
+          passwordHasFocus: false
+        })
+      } else {
+          this.setState({
+              passwordHasFocus: true
+          })
+        }
 
     render() {
         return (
@@ -71,7 +91,7 @@ export default class CreateAccount extends Component {
                         Password:
                     </Text>
                     <TextInput
-                        style={styles.input}
+                        style={[styles.input, {marginBottom: 5}]}
                         placeholder="Enter Password"
                         underlineColorAndroid={constants.COLOR_WHITE}
                         autoCapitalize='none'
@@ -84,6 +104,25 @@ export default class CreateAccount extends Component {
                             });
                         }}
                     />
+                    {this.state.failedRequirements ?
+                      <Text style={styles.failedPassword}>
+                        Password did not meet requirements
+                      </Text> :
+                      <Text style={styles.passwordReq} onPress={() => this.showRequirments()}>
+                        Password Requirements
+                      </Text>
+                    }
+                    {this.state.passwordHasFocus &&
+                        <View style={styles.passwordReqContainer}>
+                              <Text style={styles.passwordReq}>
+                                { '\u2022 Between 8 and 25 characters in length\n'}
+                                { '\u2022 Must contain at least one UPPER CASE letter\n' }
+                                { '\u2022 Must contain at least one lower case letter\n' }
+                                { '\u2022 Must contain at least one number\n' }
+                                { '\u2022 Must contain at least one special character' }
+                            </Text>
+                        </View>
+                    }
 
                     <View style={styles.buttonContainer}>
                         <View style={styles.button}>
@@ -98,6 +137,7 @@ export default class CreateAccount extends Component {
             </View>
 
         );
+
     }
 }
 
@@ -121,17 +161,6 @@ const styles = StyleSheet.create({
         height: 40,
         margin: 5
     },
-    connectionContainer: {
-        flex: 1,
-        backgroundColor: constants.COLOR_MAIN,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 30
-    },
-    connectionText: {
-        color: constants.COLOR_WHITE,
-        fontSize: constants.TEXT_LARGE
-    },
     createText: {
         color: constants.COLOR_WHITE,
         fontSize: constants.TEXT_HEADER,
@@ -147,5 +176,18 @@ const styles = StyleSheet.create({
         fontSize: constants.TEXT_MEDIUM,
         marginBottom: 10,
         color: constants.COLOR_WHITE
+    },
+    passwordReq: {
+        color: constants.COLOR_WHITE,
+        fontSize: constants.TEXT_SMALL
+    },
+    failedPassword: {
+        color: constants.COLOR_NEGATIVE,
+        fontSize: constants.TEXT_MEDIUM
+    },
+    passwordReqContainer: {
+      width: '100%',
+      padding: 5,
+      backgroundColor: constants.COLOR_GRAY_TRANSPARENT
     }
 });
