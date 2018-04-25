@@ -59,6 +59,40 @@ export const injectedJS = `(${String(function() {
                 }
                 break;
 
+            case 'hideSelectionForNewCategory':
+                snapSelectionToWord();
+                let sel = window.getSelection();
+
+                window.postMessage(JSON.stringify({
+                    messageType: 'textHidden',
+                    text : sel.toString()
+                }));
+
+                // Hide all elements in the selection range
+                var selectionRange = sel.getRangeAt(0);
+
+                if (selectionRange.commonAncestorContainer.getElementsByClassName) {
+                    // Multiple elements selected
+                    var elementsInRangeParent = selectionRange.commonAncestorContainer
+                        .getElementsByClassName(INJECTED_CLASSNAME);
+
+                    console.log(elementsInRangeParent);
+
+                    for (var i = 0, element; element = elementsInRangeParent[i]; i++) {
+                        if (sel.containsNode(element, true)) {
+                            hideElement(element);
+                        }
+                    }
+                } else { /* Single element selected */
+                    let selectedHTMLElement = sel.anchorNode.parentElement;
+
+                    if (selectedHTMLElement) {
+                        hideElement(selectedHTMLElement);
+                    }
+                }
+
+                break;
+
             case 'selectionFlagged':
                 snapSelectionToWord();
                 let category = action['category'];

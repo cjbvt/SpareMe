@@ -73,6 +73,11 @@ export default class FilterWebView extends React.Component {
                 api.addTextToCategory(jsonData['text'], category ? category: 'hateful', this.props.idToken);
                 break;
 
+            case 'textHidden':
+                console.log('hiding text: ' + jsonData['text']);
+                this.setState({textHidden: jsonData['text']})
+                break;
+
             case 'predict':
                 let predictionBatch = jsonData['content'];
 
@@ -90,7 +95,7 @@ export default class FilterWebView extends React.Component {
                                         className: key
                                     });
                                 } else {
-                                    console.log(key + ' is in category: ' + category);
+                                    // console.log(key + ' is in category: ' + category);
                                 }
                             }
                         } catch (error) {
@@ -102,7 +107,7 @@ export default class FilterWebView extends React.Component {
             case 'selectionChanged':
                 let selection = jsonData['content'];
                 let isHiddenElement = jsonData['isHiddenElement'];
-                console.log('selection changed to: ' + selection);
+                // console.log('selection changed to: ' + selection);
                 this.refs.buttonBar.setState({
                     showFlagButton: !isHiddenElement
                 });
@@ -110,7 +115,7 @@ export default class FilterWebView extends React.Component {
                 break;
 
             case 'selectionEnded':
-                console.log('selection ended');
+                // console.log('selection ended');
                 this.refs.buttonBar.setState({
                     showFlagButton: false
                 })
@@ -163,23 +168,29 @@ export default class FilterWebView extends React.Component {
         });
     }
 
-    onNewCategoryButtonPress = (categories) => {
+    onNewCategoryButtonPress = () => {
         this.setState({
             showCategoryInput: true,
-            categories: categories
+            textHidden: ''
+        });
+        this.postMessage({
+            name: 'hideSelectionForNewCategory'
         });
     }
 
     onCategorySubmit = (category) => {
         const lowerCategory = category.toLowerCase();
-        if (this.state.categories.includes(lowerCategory)) {
-            console.log('duplicate')
-            // Maybe alert, or just add to existing category
-        }
-        else {
-            console.log('unique')
-            // this.onFlagCategoryButtonPress(lowerCategory);
-        }
+        console.log('adding newly-flagged text to the API. category: ' + lowerCategory + ' text: ' + this.state.textHidden);
+        api.addTextToCategory(this.state.textHidden, category ? category: 'hateful', this.props.idToken);
+
+        this.refs.buttonBar.setState({
+            showCategories: false
+        });
+
+        this.setState({
+            showFullscreenOpacity: false,
+            showCategoryInput: false
+        });
     }
 
     onUnflagButtonPress = () => {
@@ -198,23 +209,21 @@ export default class FilterWebView extends React.Component {
     }
 
     removeFullscreen = () => {
-        if (this.state.showCategoryInput) {
-            this.setState({showCategoryInput: false});
-        }
-        else {
-            let removeCategories = this.refs.buttonBar.state.showCategories;
+        let removeCategories = this.refs.buttonBar.state.showCategories;
 
-            if (removeCategories) {
-                this.refs.buttonBar.setState({showCategories: false});
-            } else { /* remove unflag button */
-                this.refs.buttonBar.setState({showUnflagButton: false});
-                this.postMessage({
-                    name: 'unflagIgnored'
-                });
-            }
-
-            this.setState({showFullscreenOpacity: false});
+        if (removeCategories) {
+            this.refs.buttonBar.setState({showCategories: false});
+        } else { /* remove unflag button */
+            this.refs.buttonBar.setState({showUnflagButton: false});
+            this.postMessage({
+                name: 'unflagIgnored'
+            });
         }
+
+        this.setState({
+            showFullscreenOpacity: false,
+            showCategoryInput: false
+        });
     }
 
     navChangeHandler = (webState) => {
