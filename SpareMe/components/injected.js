@@ -23,21 +23,18 @@ export const injectedJS = `(${String(function() {
         document.addEventListener('selectionchange', onSelection);
 
         /* Listen for and process dynamically-added elements */
-        var observer = new MutationObserver(function(mutations) {
-                for (var i = 0; i < mutations.length; i++) {
-                    for (var j = 0; j < mutations[i].addedNodes.length; j++) {
-                        console.log(mutations[i].addedNodes[j])
-
-                        let addedNode = mutations[i].addedNodes[j];
-
+        var dynamicContentObserver = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutationRecord) {
+                    mutationRecord.addedNodes.forEach(function(addedNode) {
                         addedNode.querySelectorAll('*').forEach(function(element) {
-                            hideElement(element);
-                        })
-                    }
-                }
+                            // TODO instead of hiding, write the analyze logic  and do that
+                             hideElement(element);
+                    });
+                });
+            });
         });
-
-        observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
+        dynamicContentObserver.observe(document,
+            {attributes: false, childList: true, characterData: false, subtree:true});
 
 
         // Send tags to React for processing
@@ -184,22 +181,8 @@ export const injectedJS = `(${String(function() {
 
     function hideElement(element) {
         element.classList.add(HIDDEN_CLASSNAME);
-
-        if (element.tagName === 'IMG') {
-            if (element.oldSrc == null) {
-                element.oldSrc = element.src;
-            }
-
-            // We may want to host this image ourselves to ensure it's always available
-            element.src = "https://www.materialui.co/materialIcons/action/visibility_off_grey_192x192.png";
-            element.style.objectFit = "contain"
-            element.style.objectPosition ="50% 50%";
-
-        } else {
-            element.style.setProperty('color', 'transparent', 'important');
-            element.style.textShadow = '0 0 20px black';
-        }
-
+        element.style.setProperty('color', 'transparent', 'important');
+        element.style.textShadow = '0 0 20px black';
         element.style.webkitUserSelect = 'none';
         element.addEventListener('click', onHiddenElementClick(element));
         configureLongPressActions(element)
@@ -217,19 +200,8 @@ export const injectedJS = `(${String(function() {
     function revealElement(element) {
         element.classList.remove(HIDDEN_CLASSNAME);
         element.classList.add(REVEALED_CLASSNAME);
-
-        if (element.tagName === 'IMG') {
-            // Reset all changed image properties
-            element.style.visibility = "hidden"; // prevent image flashing
-            element.src = element.oldSrc;
-            element.style.objectFit = null;
-            element.style.objectPosition = null;
-            element.style.visibility = "visible" // prevent image flashing
-        } else {
-            element.style.color = null;
-            element.style.textShadow = null;
-        }
-
+        element.style.color = null;
+        element.style.textShadow = null;
         element.style.webkitUserSelect = 'auto';
         window.revealedElement = element;
 
@@ -370,8 +342,6 @@ export const injectedJS = `(${String(function() {
             console.log("analyzing:")
             console.log(element)
 
-            // document.addEventListener('load', (element) => {console.log("loaded:" + element); hideElement(element)}, false)
-
             // Add unique class so we can find this element later
             let addedClass = INJECTED_CLASSNAME + injectedClassCounter;
             injectedClassCounter += 1;
@@ -379,6 +349,12 @@ export const injectedJS = `(${String(function() {
 
             // Add non-unique class for easy grouping without regex
             element.classList.add(INJECTED_CLASSNAME)
+
+            /* Ensure the element has an explicit textShadow style to prevent
+            accidental style cascading when hiding container elements. */
+            element.style.textShadow = element.style.textShadow ?
+                element.style.textShadow :
+                'none';
 
             // Map the added class name to the element's innerText
             predictionGroup[addedClass] = String(element.tagName === 'IMG' ? element.alt : element.innerText)
