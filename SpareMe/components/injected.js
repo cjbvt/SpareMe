@@ -23,22 +23,62 @@ export const injectedJS = `(${String(function() {
         document.addEventListener('selectionchange', onSelection);
 
         /* Listen for and process dynamically-added elements */
-        var dynamicContentObserver = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutationRecord) {
-                    mutationRecord.addedNodes.forEach(function(addedNode) {
-                        addedNode.querySelectorAll('*').forEach(function(element) {
-                            // TODO instead of hiding, write the analyze logic  and do that
-                             hideElement(element);
-                    });
-                });
-            });
-        });
-        dynamicContentObserver.observe(document,
-            {attributes: false, childList: true, characterData: false, subtree:true});
-
+        observeDynamicPageLoads();
 
         // Send tags to React for processing
         analyzePage();
+    }
+
+    function observeDynamicPageLoads() {
+        // Process all document mutations
+        var dynamicContentObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutationRecord) {
+                this.predictionGroup = {}
+                // Process each new node added to the document
+                mutationRecord.addedNodes.forEach((addedNode) => {
+                    addedNode.querySelectorAll('*').forEach((element) => {
+                        analyzeSingleElement(element)
+                    });
+                });
+
+                // Send batch to API for processing
+                window.postMessage(JSON.stringify({
+                    messageType: 'predict',
+                    content : predictionGroup
+                }));
+                this.predictionGroup = {};
+            });
+        });
+        dynamicContentObserver.observe(document, {
+            attributes: false, childList: true,
+            characterData: false, subtree:true
+        });
+    }
+
+    function analyzeSingleElement(element, predictionGroup) {
+        if (element.tagName === 'SPAN' || element.tagName === 'DIV') {
+            // Discard divs and spans that wrap other HTML elements
+            if (element.firstChild != null && (element.firstChild.tagName === 'SPAN' || element.firstChild.tagName === 'DIV')) {
+                return;
+            }
+        }
+
+        // Add unique class so we can find this element later
+        let addedClass = INJECTED_CLASSNAME + injectedClassCounter;
+        injectedClassCounter += 1;
+        element.classList.add(addedClass);
+
+        // Add non-unique class for easy grouping without regex
+        element.classList.add(INJECTED_CLASSNAME)
+
+        /* Ensure the element has an explicit textShadow style to prevent
+        accidental style cascading when hiding container elements. */
+        element.style.textShadow = element.style.textShadow ?
+            element.style.textShadow :
+            'none';
+
+        // Map the added class name to the element's innerText
+        this.predictionGroup[addedClass] = String(element.tagName === 'IMG' ? element.alt : element.innerText)
     }
 
     /**
@@ -338,9 +378,6 @@ export const injectedJS = `(${String(function() {
                     continue;
                 }
             }
-
-            console.log("analyzing:")
-            console.log(element)
 
             // Add unique class so we can find this element later
             let addedClass = INJECTED_CLASSNAME + injectedClassCounter;
