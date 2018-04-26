@@ -67,10 +67,7 @@ export default class CreateAccount extends Component {
 
     validatePassword(pw) {
         var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
-        if (!strongRegex.test(pw)){
-            return false;
-        }
-        return true;
+        return strongRegex.test(pw);
     }
 
     render() {
