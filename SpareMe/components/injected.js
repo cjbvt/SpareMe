@@ -22,8 +22,63 @@ export const injectedJS = `(${String(function() {
         document.addEventListener('message', onReactMessage);
         document.addEventListener('selectionchange', onSelection);
 
+        /* Listen for and process dynamically-added elements */
+        observeDynamicPageLoads();
+
         // Send tags to React for processing
         analyzePage();
+    }
+
+    function observeDynamicPageLoads() {
+        // Process all document mutations
+        var dynamicContentObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutationRecord) {
+                this.predictionGroup = {}
+                // Process each new node added to the document
+                mutationRecord.addedNodes.forEach((addedNode) => {
+                    addedNode.querySelectorAll('*').forEach((element) => {
+                        analyzeSingleElement(element)
+                    });
+                });
+
+                // Send batch to API for processing
+                window.postMessage(JSON.stringify({
+                    messageType: 'predict',
+                    content : predictionGroup
+                }));
+                this.predictionGroup = {};
+            });
+        });
+        dynamicContentObserver.observe(document, {
+            attributes: false, childList: true,
+            characterData: false, subtree:true
+        });
+    }
+
+    function analyzeSingleElement(element, predictionGroup) {
+        if (element.tagName === 'SPAN' || element.tagName === 'DIV') {
+            // Discard divs and spans that wrap other HTML elements
+            if (element.firstChild != null && (element.firstChild.tagName === 'SPAN' || element.firstChild.tagName === 'DIV')) {
+                return;
+            }
+        }
+
+        // Add unique class so we can find this element later
+        let addedClass = INJECTED_CLASSNAME + injectedClassCounter;
+        injectedClassCounter += 1;
+        element.classList.add(addedClass);
+
+        // Add non-unique class for easy grouping without regex
+        element.classList.add(INJECTED_CLASSNAME)
+
+        /* Ensure the element has an explicit textShadow style to prevent
+        accidental style cascading when hiding container elements. */
+        element.style.textShadow = element.style.textShadow ?
+            element.style.textShadow :
+            'none';
+
+        // Map the added class name to the element's innerText
+        this.predictionGroup[addedClass] = String(element.tagName === 'IMG' ? element.alt : element.innerText)
     }
 
     /**
@@ -52,6 +107,10 @@ export const injectedJS = `(${String(function() {
             case 'hide':
                 let className = action['className'];
                 var element = document.getElementsByClassName(className)[0];
+
+                if (!element) {
+                    return;
+                }
 
                 // Only hide elements once :D
                 if (!isHidden(element) && !isRevealed(element)) {
@@ -112,8 +171,6 @@ export const injectedJS = `(${String(function() {
                     var elementsInRangeParent = selectionRange.commonAncestorContainer
                         .getElementsByClassName(INJECTED_CLASSNAME);
 
-                    console.log(elementsInRangeParent);
-
                     for (var i = 0, element; element = elementsInRangeParent[i]; i++) {
                         if (selection.containsNode(element, true)) {
                             hideElement(element);
@@ -136,7 +193,7 @@ export const injectedJS = `(${String(function() {
                 // Alert React that the user unflagged an element
                 window.postMessage(JSON.stringify({
                     messageType: 'addTextToAPI',
-                    text : String(element.tagName === 'img' ?
+                    text : String(element.tagName === 'IMG' ?
                         element.alt :
                         element.innerText),
                         category: DEFAULT_CATEGORY
@@ -146,6 +203,14 @@ export const injectedJS = `(${String(function() {
             case 'unflagIgnored':
                 var element = window.revealedElement;
                 hideElement(element);
+                console.log("unflag ignored for ");
+                console.log(element);
+
+                let img = element.getElementsByTagName("IMG")[0];
+                if (img != null) {
+                    hideElement(img);
+                }
+
                 break;
 
             default:
@@ -156,24 +221,34 @@ export const injectedJS = `(${String(function() {
 
     function hideElement(element) {
         element.classList.add(HIDDEN_CLASSNAME);
-
-        // Cascade class down to all children
-        for (var i = 0; i < element.children.length; i++) {
-            element.children.item(i).classList.add(HIDDEN_CLASSNAME);
-        }
-
-        element.style.filter = 'blur(10px)';
+        element.style.setProperty('color', 'transparent', 'important');
+        element.style.textShadow = '0 0 20px black';
         element.style.webkitUserSelect = 'none';
         element.addEventListener('click', onHiddenElementClick(element));
         configureLongPressActions(element)
+
+        var children = element.children;
+
+        // If this node was revealed, check and hide any of its revealed children.
+        for (var i = 0; i < children.length; i++) {
+            if (isRevealed(children[i])) {
+                hideElement(children[i]);
+            }
+        }
     }
 
     function revealElement(element) {
         element.classList.remove(HIDDEN_CLASSNAME);
         element.classList.add(REVEALED_CLASSNAME);
+        element.style.color = null;
+        element.style.textShadow = null;
         element.style.webkitUserSelect = 'auto';
-        element.style.filter = 'blur(0px)';
         window.revealedElement = element;
+
+        // Recurse up for elements in containers
+        if (isHidden(element.parentElement)) {
+            revealElement(parentElement);
+        }
     }
 
     function configureLongPressActions(node) {
@@ -204,6 +279,8 @@ export const injectedJS = `(${String(function() {
     function onHiddenElementClick(element) {
         return function(event) {
             if (isHidden(element)) {
+                console.log("called onHiddenElementClick for ")
+                console.log(element);
                 /* Element must be revealed before allowing
                 its normal onclick to fire */
                 event.preventDefault();
@@ -290,17 +367,15 @@ export const injectedJS = `(${String(function() {
     }
 
     function analyzePage() {
-        var elements = document.body.querySelectorAll('p, a, li, h1, h2, h3, h4, span, div');
+        var elements = document.body.querySelectorAll('p, a, li, h1, h2, h3, h4, span, div, font, b, img, strong');
         var predictionGroup = {};
         for (var i = 0; i < elements.length; i++) {
-            var element = elements[i]
+            var element = elements[i];
 
-            // Discard divs and spans that wrap other HTML elements
             if (element.tagName === 'SPAN' || element.tagName === 'DIV') {
-                if (element.childElementCount != 0) {
+                // Discard divs and spans that wrap other HTML elements
+                if (element.firstChild != null && (element.firstChild.tagName === 'SPAN' || element.firstChild.tagName === 'DIV')) {
                     continue;
-                } else {
-                    console.log('Found non-empty div/span');
                 }
             }
 
@@ -312,8 +387,14 @@ export const injectedJS = `(${String(function() {
             // Add non-unique class for easy grouping without regex
             element.classList.add(INJECTED_CLASSNAME)
 
+            /* Ensure the element has an explicit textShadow style to prevent
+            accidental style cascading when hiding container elements. */
+            element.style.textShadow = element.style.textShadow ?
+                element.style.textShadow :
+                'none';
+
             // Map the added class name to the element's innerText
-            predictionGroup[addedClass] = String(element.tagName === 'img' ? element.alt : element.innerText)
+            predictionGroup[addedClass] = String(element.tagName === 'IMG' ? element.alt : element.innerText)
 
             // Send elements in groups of HTTP_BATCH_SIZE to React
             if (injectedClassCounter % HTTP_BATCH_SIZE == 0 || i == elements.length - 1) {
@@ -328,11 +409,11 @@ export const injectedJS = `(${String(function() {
     }
 
     function isHidden(element) {
-        return element.classList.contains(HIDDEN_CLASSNAME);
+        return element && element.classList.contains(HIDDEN_CLASSNAME);
     }
 
     function isRevealed(element) {
-        return element.classList.contains(REVEALED_CLASSNAME);
+        return element && element.classList.contains(REVEALED_CLASSNAME);
     }
 
 })})();` // JavaScript :)
