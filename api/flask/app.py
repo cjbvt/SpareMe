@@ -232,3 +232,24 @@ def stats():
         session.close()
         Session.remove()
     return json.dumps(stats), status.HTTP_200_OK
+
+@app.route('/rebuild', methods=['POST'])
+def rebuild():
+    """
+    Adds the given text to the database for a user, labeled with the given
+    label text, and re-fits their classifier.
+    """
+    try:
+        id_token = request.form['id_token']
+        uid = verify_id_token(id_token)
+    except KeyError:
+        return "id_token required", status.HTTP_400_BAD_REQUEST
+    except ValueError:
+        return "id_token unrecognized", status.HTTP_400_BAD_REQUEST
+    except auth.AuthError as exc:
+        if exc.code == 'ID_TOKEN_REVOKED':
+            return "id_token revoked", status.HTTP_400_BAD_REQUEST
+        else:
+            return "id_token invalid", status.HTTP_400_BAD_REQUEST
+    classifier.fit(uid)
+    return "Model rebuilding for user", status.HTTP_200_OK
