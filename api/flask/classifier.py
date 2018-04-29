@@ -1,11 +1,48 @@
 from threading import Thread
-from multiprocessing import Process
+from multiprocessing import Pool
 import os
 import tempfile
 
+from database import Session
 import dal
 import ftclassifier
 # import sgdclassifier
+
+def fit_process(uid):
+    # create a new temporary model file
+    fd, path = tempfile.mkstemp()
+
+    # close the temporary model file descriptor as we don't need it
+    os.close(fd)
+
+    # give this process a dedicated session
+    session = Session()
+    try:
+        ftclassifier.fit(session, uid, path)
+        # sgdclassifier.fit(session, uid, path)
+
+        # persist the model to the database
+        with open(path, 'rb') as f:
+            classifier = f.read()
+            dal.update_classifier(session, uid, classifier)
+
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+        Session.remove()
+
+    # delete the temporary model file
+    os.unlink(path)
+
+p = Pool(1)
+def fit_thread(uid):
+    """
+    Asynchronously spawns a subprocess which fits a new classifier.
+    """
+    p.map(fit_process, [uid])
 
 def fit(uid):
     """
@@ -21,37 +58,11 @@ def fit(uid):
     t = Thread(target=fit_thread, args=(uid,))
     t.start()
 
-def fit_thread(uid):
-    """
-    Asynchronously spawns a subprocess which fits a new classifier.
-    """
-    p = Process(target=fit_process, args=(uid,))
-    p.start()
-    p.join()
-
-def fit_process(uid):
-    # create a new temporary model file
-    fd, path = tempfile.mkstemp()
-
-    # close the temporary model file descriptor as we don't need it
-    os.close(fd)
-
-    ftclassifier.fit(uid, path)
-    # sgdclassifier.fit(uid, path)
-
-    # persist the model to the database
-    with open(path, 'rb') as f:
-        classifier = f.read()
-        dal.update_classifier(uid, classifier)
-
-    # delete the temporary model file
-    os.unlink(path)
-
-def predict(uid, unlabeled_text):
+def predict(session, uid, unlabeled_text):
     """
     Predicts the text label of every value in the given list of unlabeled text.
     """
-    classifier = dal.get_classifier(uid)
+    classifier = dal.get_classifier(session, uid)
     if not classifier:
         return ['harmless' for _ in unlabeled_text]
 
@@ -66,7 +77,7 @@ def predict(uid, unlabeled_text):
         f.write(classifier)
 
     predictions = ftclassifier.predict(uid, path, unlabeled_text)
-    # predictions = sgdclassifier.predict(uid, path, unlabeled_text)
+    # predictions = sgdclassifier.predict(session, uid, path, unlabeled_text)
     
     # delete the temporary model file
     os.unlink(path)

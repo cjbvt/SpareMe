@@ -9,6 +9,8 @@ import json
 import firebase_admin
 from firebase_admin import auth, credentials
 
+from database import Session
+
 import dal
 import classifier
 
@@ -56,7 +58,16 @@ def populate():
             return "id_token revoked", status.HTTP_400_BAD_REQUEST
         else:
             return "id_token invalid", status.HTTP_400_BAD_REQUEST
-    dal.populate(uid)
+    session = Session()
+    try:
+        dal.populate(session, uid)
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+        Session.remove()
     classifier.fit(uid)
     return "Sample data added for user", status.HTTP_202_ACCEPTED
 
@@ -86,7 +97,16 @@ def add():
         text = request.form['text']
     except KeyError:
         return "text required", status.HTTP_400_BAD_REQUEST
-    dal.add_labeled_text(uid, label, text)
+    session = Session()
+    try:
+        dal.add_labeled_text(session, uid, label, text)
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+        Session.remove()
     classifier.fit(uid)
     return "Labeled text added for user", status.HTTP_202_ACCEPTED
 
@@ -113,7 +133,16 @@ def predict():
         return "unlabeled_text required", status.HTTP_400_BAD_REQUEST
     except ValueError:
         return "unlabeled_text unrecognized", status.HTTP_400_BAD_REQUEST
-    predicted_labels = classifier.predict(uid, list(unlabeled_text.values()))
+    session = Session()
+    try:
+        predicted_labels = classifier.predict(session, uid, list(unlabeled_text.values()))
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+        Session.remove()
     predictions = dict(zip(unlabeled_text.keys(), predicted_labels))
     return json.dumps(predictions), status.HTTP_200_OK
 
@@ -134,7 +163,16 @@ def reset():
             return "id_token revoked", status.HTTP_400_BAD_REQUEST
         else:
             return "id_token invalid", status.HTTP_400_BAD_REQUEST
-    dal.delete(uid)
+    session = Session()
+    try:
+        dal.delete(session, uid)
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+        Session.remove()
     return "User data deleted", status.HTTP_202_ACCEPTED
 
 @app.route('/labels', methods=['POST'])
@@ -154,5 +192,14 @@ def labels():
             return "id_token revoked", status.HTTP_400_BAD_REQUEST
         else:
             return "id_token invalid", status.HTTP_400_BAD_REQUEST
-    labels = dal.get_labels(uid)
+    session = Session()
+    try:
+        labels = dal.get_labels(session, uid)
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+        Session.remove()
     return json.dumps(labels), status.HTTP_200_OK
