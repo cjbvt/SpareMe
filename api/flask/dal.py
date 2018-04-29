@@ -112,3 +112,23 @@ def get_classifier(session, uid):
     if not classifier:
         return None
     return classifier.model
+
+def get_stats(session, uid):
+    """
+    Gets the user's stats.
+    """
+    freq_dist = {}
+    label_count = session.query(Label).filter_by(uid=uid).count()
+    labeled_text_count = session.query(LabeledText).filter_by(uid=uid).count()
+    classifier = session.query(Classifier).filter_by(uid=uid).first()
+    classifier_timestamp = None if not classifier else classifier.timestamp
+    for db_label in session.query(Label).filter_by(uid=uid):
+        frequency = session.query(LabeledText).filter_by(uid=uid,label=db_label.id).count()
+        freq_dist[db_label.label] = frequency
+    stats = {
+        'label_count': label_count,
+        'labeled_text_count': labeled_text_count,
+        'freq_dist': freq_dist,
+        'classifier_timestamp': str(classifier_timestamp)
+    }
+    return stats
