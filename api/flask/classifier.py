@@ -64,6 +64,7 @@ def predict(session, uid, unlabeled_text):
     """
     classifier = dal.get_classifier(session, uid)
     if not classifier:
+        print('classifier not found; assuming harmless')
         return ['harmless' for _ in unlabeled_text]
 
     # create a new temporary model file
