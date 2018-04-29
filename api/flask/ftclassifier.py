@@ -27,6 +27,12 @@ def preprocess(datum):
 def fit(session, uid, path):
     labeled_text = dal.get_text_labeled_text(session, uid)
 
+    # bail out if the model was already trained after the last label text was added
+    text_timestamp = dal.get_labeled_text_timestamp(session, uid)
+    classifier_timestamp = dal.get_classifier_timestamp(session, uid)
+    if text_timestamp and classifier_timestamp and text_timestamp < classifier_timestamp:
+        return
+
     # not sure if this is the right prereq for fasttext
     if len(labeled_text['targets']) < 2:
         return
@@ -57,7 +63,7 @@ def fit(session, uid, path):
     # serialize the model out to the temporary model file
     model.save_model(path)
 
-def predict(uid, path, unlabeled_text):
+def predict(session, uid, path, unlabeled_text):
     # preprocess training data one line at a time in order to limit pipe buffer issues
     preprocessed_data = [preprocess(datum) for datum in unlabeled_text]
 

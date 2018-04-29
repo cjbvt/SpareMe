@@ -12,7 +12,7 @@ export const injectedJS = `(${String(function() {
 
     var injectedClassCounter = 0;
 
-    const HTTP_BATCH_SIZE = 25
+    const HTTP_BATCH_SIZE = 10
 
     inject();
 
