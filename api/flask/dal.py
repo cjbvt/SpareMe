@@ -31,6 +31,16 @@ def get_label_text(session, uid, label_id):
         return None
     return label.label
 
+def get_label_id_for_labeled_text(session, uid, text):
+    """
+    Get the id of the label, if any, that's already assigned to the given
+    text in the database.
+    """
+    labeled_text = session.query(LabeledText).filter_by(uid=uid, text=text).first()
+    if not labeled_text:
+        return None
+    return labeled_text.label
+
 def add_labeled_text(session, uid, label_text, text):
     """
     Adds the given text to the database for a user, labeled with the given
@@ -112,6 +122,24 @@ def get_classifier(session, uid):
     if not classifier:
         return None
     return classifier.model
+
+def get_labeled_text_timestamp(session, uid):
+    """
+    Get the timestamp that represents when the user's most recently labeled
+    text was added to the database.
+    """
+    labeled_text = session.query(LabeledText).filter_by(uid=uid).order_by(LabeledText.timestamp.desc()).first()
+    return labeled_text.timestamp
+
+def get_classifier_timestamp(session, uid):
+    """
+    Gets the timestamp that represents when the user's binary classifier
+    blob was added to the database.
+    """
+    classifier = session.query(Classifier).filter_by(uid=uid).first()
+    if not classifier:
+        return None
+    return classifier.timestamp
 
 def get_stats(session, uid):
     """
