@@ -11,8 +11,8 @@ import tempfile
 
 import dal
 
-def fit(uid, path):
-    labeled_text = dal.get_id_labeled_text(uid)
+def fit(session, uid, path):
+    labeled_text = dal.get_id_labeled_text(session, uid)
 
     # Requires enough data for each target to be split into training, test, and
     # validation sets.
@@ -42,7 +42,7 @@ def fit(uid, path):
     with open(path, "wb") as f:
         pickle.dump(gs_clf, f)
 
-def predict(uid, path, unlabeled_text):
+def predict(session, uid, path, unlabeled_text):
     # deserialize the model in from the temporary model file
     with open(path, "rb") as f:
         gs_clf = pickle.load(f)
@@ -51,4 +51,4 @@ def predict(uid, path, unlabeled_text):
     predicted_ids = gs_clf.predict(unlabeled_text)
 
     # convert the predicted label ids to actual label text for each unlabeled text string
-    return [dal.get_label_text(uid, int(id)) for id in predicted_ids]
+    return [dal.get_label_text(session, uid, int(id)) for id in predicted_ids]

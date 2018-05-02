@@ -9,8 +9,8 @@ import dal
 
 label_prefix = "__label__"
 
-def fit(uid, path):
-    labeled_text = dal.get_text_labeled_text(uid)
+def fit(session, uid, path):
+    labeled_text = dal.get_text_labeled_text(session, uid)
 
     # not sure if this is the right prereq for fasttext
     if len(labeled_text['targets']) < 2:
