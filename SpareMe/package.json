@@ -11,17 +11,21 @@
     "start": "react-native start",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "test": "node node_modules/jest/bin/jest.js"
+    "test": "node node_modules/jest/bin/jest.js",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "jest": {
     "preset": "react-native"
   },
   "dependencies": {
     "react": "16.2.0",
-    "react-native": "0.52.0",
+    "react-native": "0.59.0",
     "react-native-firebase": "^3.3.1",
     "react-native-splash-screen": "^3.0.6",
     "react-native-video": "^2.0.0",
-    "react-navigation": "^1.5.8"
-  }
+    "react-navigation": "^1.5.8",
+    "snyk": "^1.150.0"
+  },
+  "snyk": true
 }
