@@ -17,8 +17,8 @@
     "preset": "react-native"
   },
   "dependencies": {
-    "react": "16.2.0",
-    "react-native": "0.52.0",
+    "react": "16.5.0",
+    "react-native": "0.64.0",
     "react-native-firebase": "^3.3.1",
     "react-native-splash-screen": "^3.0.6",
     "react-native-video": "^2.0.0",
